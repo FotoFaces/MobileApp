@@ -2,23 +2,33 @@ import React from 'react'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
-import Paragraph from '../components/Paragraph'
 import Button from '../components/Button'
+import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 
-export default function Dashboard({ navigation }) {
+
+export default function MainScreen({ navigation }) {
   return (
     <Background>
-      <Header>Profile</Header>
-      <Paragraph>
-        Current Photo
-      </Paragraph>
       <DisplayAnImage />
+      <Header>MainScreen</Header>
+      <Paragraph>
+      </Paragraph>
+      <Button
+        mode="contained"
+      >
+        Take a Photo
+      </Button>
+      <Button
+        mode="outlined"
+      >
+        Gallery
+      </Button>
       <Button
         mode="outlined"
         onPress={() => navigation.navigate('PhotoAccept')}
       >
-        Take a New Photo
+        Accept Photo
       </Button>
     </Background>
   )

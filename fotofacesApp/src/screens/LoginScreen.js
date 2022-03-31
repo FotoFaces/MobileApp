@@ -25,7 +25,7 @@ export default function LoginScreen({ navigation }) {
     }
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Dashboard' }],
+      routes: [{ name: 'MainScreen' }],
     })
   }
 
@@ -55,6 +55,7 @@ export default function LoginScreen({ navigation }) {
         errorText={password.error}
         secureTextEntry
       />
+
       <View style={styles.forgotPassword}>
         <TouchableOpacity
           onPress={() => navigation.navigate('ResetPasswordScreen')}
@@ -62,9 +63,11 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.forgot}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
+
       <Button mode="contained" onPress={onLoginPressed}>
         Login
       </Button>
+
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
         <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
