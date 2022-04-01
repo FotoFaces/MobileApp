@@ -10,8 +10,8 @@ import DisplayAnImage from '../components/Image'
 export default function MainScreen({ navigation }) {
   return (
     <Background>
+      <Header>Profile</Header>
       <DisplayAnImage />
-      <Header>MainScreen</Header>
       <Paragraph>
       </Paragraph>
       <Button

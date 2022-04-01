@@ -12,13 +12,11 @@ export default function PhotoChoice({ navigation }) {
     <Background>
       <Header>Update Photo</Header>
       <DisplayAnImage />
-
       <View style={styles.container}>
         <Paragraph>
-          Are you sure you want to submit?
+          Are you sure you want to submit this photo?
         </Paragraph>
       </View>
-
       <View style={styles.container}>
         <View style={styles.button_1}>
           <Button
@@ -46,6 +44,7 @@ const styles = StyleSheet.create({
     alignContent:"space-between",
     textAlign:"center",
     margin:5,
+    padding:2,
   },
   button_2: {
     flex:2 ,
