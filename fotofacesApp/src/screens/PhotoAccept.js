@@ -11,7 +11,11 @@ export default function PhotoChoice({ navigation }) {
   return (
     <Background>
       <Header>Update Photo</Header>
-      <DisplayAnImage />
+      <Text 
+        style={styles.headline}> ✅ Valid Photo !! 
+      </Text>
+      <Text>{"\n"}</Text>
+      <DisplayAnImage/>
       <View style={styles.container}>
         <Paragraph>
           Are you sure you want to submit this photo?
@@ -54,5 +58,13 @@ const styles = StyleSheet.create({
   button_1: {
     flex:2 ,
     margin:5,
-}
+},
+
+  headline: {
+    color: 'green', // <-- The magic
+    textAlign: 'center', // <-- The magic
+    fontWeight: 'bold',
+    fontSize: 19,
+    lineHeight: 21
+  }
 })
