@@ -7,6 +7,7 @@ import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 
 
+
 export default function MainScreen({ navigation }) {
   return (
     <Background>

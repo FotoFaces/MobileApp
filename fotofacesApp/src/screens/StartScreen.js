@@ -10,9 +10,9 @@ export default function StartScreen({ navigation }) {
   return (
     <Background>
       <Logo />
-      <Header>Login Template</Header>
+      <Header>FotoFaces</Header>
       <Paragraph>
-        The easiest way to start with your amazing application.
+        The easiest way to update your photo
       </Paragraph>
       <Button
         mode="contained"
