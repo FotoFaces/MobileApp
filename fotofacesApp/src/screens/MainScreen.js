@@ -73,7 +73,7 @@ export default function MainScreen({ navigation }) {
       </Button>
       <Button
         mode="outlined"
-        onPress={() => navigation.navigate('PhotoAccept', { myItem: image })}
+        onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
       >
         Accept Photo
       </Button>

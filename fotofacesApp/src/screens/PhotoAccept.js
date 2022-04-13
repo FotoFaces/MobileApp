@@ -6,8 +6,10 @@ import Button from '../components/Button'
 import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 import { Text, View, StyleSheet } from 'react-native';
+import {useRoute} from '@react-navigation/native';
 
 export default function PhotoChoice({ navigation }) {
+  const route = useRoute();
   return (
     <Background>
       <Header>Update Photo</Header>
@@ -15,7 +17,7 @@ export default function PhotoChoice({ navigation }) {
         style={styles.headline}> ✅ Valid Photo !! 
       </Text>
       <Text>{"\n"}</Text>
-      <DisplayAnImage/>
+      <DisplayAnImage photo_url={route.params.image2} />
       <View style={styles.container}>
         <Paragraph>
           Are you sure you want to submit this photo?
