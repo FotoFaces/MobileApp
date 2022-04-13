@@ -8,7 +8,7 @@ export default function DisplayImage({ photo_url, style, ...props }) {
       <Image
         style={styles.thumbnail}
         source={{
-          uri: 'https://cdn.discordapp.com/attachments/953678275459293244/954431007057121280/IMG_20220318_172734.jpg',
+          uri: photo_url,
         }}
       />
      </View>

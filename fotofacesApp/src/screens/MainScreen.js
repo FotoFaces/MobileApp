@@ -12,8 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 
+
 export default function MainScreen({ navigation }) {
 
+  const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
@@ -32,27 +34,46 @@ export default function MainScreen({ navigation }) {
     }
   };
 
+  const openCamera = async () => {
+    // Ask the user for the permission to access the camera
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("You've refused to allow this appp to access your camera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync();
+
+    // Explore the result
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+      console.log(result.uri);
+    }
+  }
   return (
     <Background>
       <Header>Profile</Header>
-      <DisplayAnImage/>
+      <DisplayAnImage photo_url={image}/>
       <Paragraph>
       </Paragraph>
       <Button
         mode="contained"
+        onPress={openCamera}
       >
         Take a Photo
       </Button>
       <Button
         mode="outlined"
-        onPress={() => pickImage}
+        onPress={pickImage}
       >
         Gallery
       </Button>
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
       <Button
         mode="outlined"
-        onPress={() => navigation.navigate('PhotoAccept')}
+        onPress={() => navigation.navigate('PhotoAccept', { myItem: image })}
       >
         Accept Photo
       </Button>
