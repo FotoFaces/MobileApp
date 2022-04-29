@@ -16,3 +16,14 @@ npm start
 4º Open the metro bundler with the localhost link reffered in the terminal
 
 5º Open app with web browser OR open with expo Go app in a smartphone and scan the qr code
+
+
+## ArchLinux
+pacman -Syu nodejs-lts-gallium
+npm install expo-cli --global
+npm start
+
+## Needed
+expo-image-picker
+npm install form-data-encoder
+formdata-node
