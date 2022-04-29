@@ -73,7 +73,27 @@ export default function MainScreen({ navigation }) {
       </Button>
       <Button
         mode="outlined"
-        onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
+        // onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
+        onPress={() =>  { fetch('http://127.0.0.1:5000/', {
+                            method: 'POST',
+                            headers: {'Content-Type':'application/json', 'Access-Control-Allow-Origin': '*'},
+                            body: JSON.stringify({
+                              candidate: image ,
+                              id:'10'
+                            })
+                          });
+
+                          const response = async () => {
+                            try {
+                             const response = await fetch('http://127.0.0.1:5000/');
+                             const json = await response.json();
+                             console.log(json)
+                           } catch (error) {
+                             console.error(error);
+                           }
+                          }
+                        }
+                }
       >
         Accept Photo
       </Button>
