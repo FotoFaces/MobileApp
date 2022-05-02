@@ -17,6 +17,7 @@ export default function MainScreen({ navigation }) {
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
+  const [imageUri, setImageUri] = useState(null);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -25,15 +26,18 @@ export default function MainScreen({ navigation }) {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
-    console.log(result);
+    console.log("sdfaf")
+    console.log(result.base64);
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      console.log("data -> " + result.uri.split(",")[1])
+      setImage(result.base64);
+      setImageUri(result.uri)
     }
   };
-
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -43,20 +47,24 @@ export default function MainScreen({ navigation }) {
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync();
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 1,
+      base64: true,
+    });
 
     // Explore the result
-    console.log(result);
+    console.log("sdfaf")
+    console.log(result.base64);
 
     if (!result.cancelled) {
-      setImage(result.uri);
-      console.log(result.uri);
+      setImage(result.base64);
+      setImageUri(result.uri)
     }
   }
   return (
     <Background>
       <Header>Profile</Header>
-      <DisplayAnImage photo_url={image}/>
+      <DisplayAnImage photo_url={imageUri}/>
       <Paragraph>
       </Paragraph>
       <Button
@@ -74,21 +82,39 @@ export default function MainScreen({ navigation }) {
       <Button
         mode="outlined"
         // onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
-        onPress={() =>  { 
-                          const response = async () => {
-                            await fetch('http://127.0.0.1:5000/', {
+        onPress={() =>  {
+
+                            let formData = new FormData();
+                            formData.append("id", 10);
+                            formData.append("candidate", image);
+
+                            let resp = fetch('http://192.168.1.162:8080/', {
                               method: 'POST',
-                              headers: {'Content-Type':'application/json', 'Access-Control-Allow-Origin': '*'},
-                              body: JSON.stringify({
-                                candidate: image ,
-                                id:'10'
-                              })
-                            }).then((data) => {console.log(data)});
+                              body: formData
+                            }).then((data)=>{console.log(data.json())})
+
+                          }
+                        }
+      >
+        Accept Photo
+      </Button>
+      <Button
+        mode="outlined"
+        // onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
+        onPress={() =>  {
+                          const response = async () => {
+                            await fetch('http://192.168.1.162:8080/hello', {
+                              method: 'POST',
+                              headers: {'Content-Type':'multipart/form-data',
+                                        'Access-Control-Allow-Origin': '*'},
+                            })
+
+                              .then((data) => {console.log(data.json())});
                           }
                         }
                 }
       >
-        Accept Photo
+    Send Post
       </Button>
     </Background>
   )
