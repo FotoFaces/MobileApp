@@ -15,6 +15,14 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
 
+  const Data = {
+    "filipe@ua.pt": ["admin", 1],
+    "mini@ua.pt": ["admin", 1],
+    "maestro@ua.pt": ["admin", 1],
+    "vicente@ua.pt": ["admin", 1],
+    "borges@ua.pt": ["admin", 1]
+  }
+
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
@@ -23,10 +31,22 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'MainScreen' }],
-    })
+
+    if (Object.keys(Data).includes(email.value)) {
+      if (Data[email.value][0] === password.value) {
+
+        navigation.navigate('MainScreen', 
+          {
+            email: email.value,
+            identifier: Data[email.value][1]
+          }
+        );
+
+      }
+    }
+    setEmail({ ...email, error: " " })
+    setPassword({ ...password, error: "Email or password incorrect" })
+    return 
   }
 
   return (

@@ -13,11 +13,12 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ route, navigation }) {
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
+  const { email, identifier } = route.params;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -85,14 +86,13 @@ export default function MainScreen({ navigation }) {
         onPress={() =>  {
 
                             let formData = new FormData();
-                            formData.append("id", 10);
+                            formData.append("id", identifier);
                             formData.append("candidate", image);
 
                             let resp = fetch('http://localhost:5000/', {
                               method: 'POST',
                               body: formData
                             }).then((data)=>{console.log(data.json())})
-
                           }
                         }
       >
@@ -102,14 +102,17 @@ export default function MainScreen({ navigation }) {
         mode="outlined"
         // onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
         onPress={() =>  {
+                          let formData = new FormData();
+                          formData.append("id", identifier);
+                          formData.append("candidate", image);
+
                           const response = async () => {
                             await fetch('http://192.168.1.162:8080/hello', {
                               method: 'POST',
                               headers: {'Content-Type':'multipart/form-data',
                                         'Access-Control-Allow-Origin': '*'},
-                            })
-
-                              .then((data) => {console.log(data.json())});
+                              body: formData
+                            }).then((data) => {console.log(data.json())});
                           }
                         }
                 }
