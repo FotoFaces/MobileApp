@@ -17,10 +17,10 @@ export default function LoginScreen({ navigation }) {
 
   const Data = {
     "filipe@ua.pt": ["admin", 1],
-    "mini@ua.pt": ["admin", 1],
-    "maestro@ua.pt": ["admin", 1],
-    "vicente@ua.pt": ["admin", 1],
-    "borges@ua.pt": ["admin", 1]
+    "mini@ua.pt": ["admin", 2],
+    "maestro@ua.pt": ["admin", 3],
+    "vicente@ua.pt": ["admin", 4],
+    "borges@ua.pt": ["admin", 5]
   }
 
   const onLoginPressed = () => {
