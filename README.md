@@ -27,3 +27,5 @@ npm start
 expo-image-picker
 npm install form-data-encoder
 formdata-node
+
+npm install react-native-md5 --save
