@@ -18,7 +18,7 @@ export default function MainScreen({ route, navigation }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
-  const { email, identifier } = route.params;
+  const { email, identifier, old_image } = route.params;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library

@@ -10,21 +10,12 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
-import RNCryptor from 'react-native-rncryptor';
+import md5 from "react-native-md5";
 
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
-  var CryptoJS = require("crypto-js");
-
-  const Data = {
-    "filipe@ua.pt": ["admin", 1],
-    "mini@ua.pt": ["admin", 2],
-    "maestro@ua.pt": ["admin", 3],
-    "vicente@ua.pt": ["admin", 4],
-    "borges@ua.pt": ["admin", 5]
-  }
 
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value)
@@ -35,37 +26,29 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-
     let resp = fetch('http://localhost:8393/user/'+email.value, {
       method: 'GET',
     }).then((data)=>{
       data.json().then((logins) => {
 
+        let hex_md5v = md5.hex_md5( password.value );
 
-        RNCryptor.decrypt('encrypted base64', 'appmobile').then((plaintext)=>{
-          console.log(plaintext)
-        }).catch((error)=>{
-          console.log(error)
-        })
-
-
-
-
-
-        if (password.value === "") {
+        if (hex_md5v === logins["password"]) {
           navigation.navigate('MainScreen', 
           {
             email: email.value,
             identifier: logins["id"],
             old_photo: logins["photo"]
           }
-        );
+          );
+        }
+        else {
+          setEmail({ ...email, error: " " })
+          setPassword({ ...password, error: "Email or password incorrect" })
         }
       })
     })
 
-    setEmail({ ...email, error: " " })
-    setPassword({ ...password, error: "Email or password incorrect" })
     return 
   }
 
