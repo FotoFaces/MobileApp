@@ -10,6 +10,8 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
+import md5 from "react-native-md5";
+
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -23,10 +25,31 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'MainScreen' }],
+
+    let resp = fetch('http://localhost:8393/user/'+email.value, {
+      method: 'GET',
+    }).then((data)=>{
+      data.json().then((logins) => {
+
+        let hex_md5v = md5.hex_md5( password.value );
+
+        if (hex_md5v === logins["password"]) {
+          navigation.navigate('MainScreen', 
+          {
+            email: email.value,
+            identifier: logins["id"],
+            old_photo: logins["photo"]
+          }
+          );
+        }
+        else {
+          setEmail({ ...email, error: " " })
+          setPassword({ ...password, error: "Email or password incorrect" })
+        }
+      })
     })
+
+    return 
   }
 
   return (

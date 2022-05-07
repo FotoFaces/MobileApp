@@ -13,11 +13,12 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ route, navigation }) {
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
+  const { email, identifier, old_image } = route.params;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -29,11 +30,7 @@ export default function MainScreen({ navigation }) {
       base64: true,
     });
 
-    console.log("sdfaf")
-    console.log(result.base64);
-
     if (!result.cancelled) {
-      console.log("data -> " + result.uri.split(",")[1])
       setImage(result.base64);
       setImageUri(result.uri)
     }
@@ -52,15 +49,30 @@ export default function MainScreen({ navigation }) {
       base64: true,
     });
 
-    // Explore the result
-    console.log("sdfaf")
-    console.log(result.base64);
-
     if (!result.cancelled) {
       setImage(result.base64);
       setImageUri(result.uri)
     }
   }
+
+
+  // PHOTO VALIDATION
+  function validPhoto(resp) {
+    resp = JSON.parse(resp)
+
+    if (resp["Colored Picture"] != true) {
+      return false
+    }
+
+    if (resp["Face Candidate Detected"] != true) {
+      return false
+    }
+
+    return false
+  }
+
+
+
   return (
     <Background>
       <Header>Profile</Header>
@@ -81,40 +93,25 @@ export default function MainScreen({ navigation }) {
       </Button>
       <Button
         mode="outlined"
-        // onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
         onPress={() =>  {
-
                             let formData = new FormData();
-                            formData.append("id", 10);
+                            formData.append("id", identifier);
                             formData.append("candidate", image);
 
-                            let resp = fetch('http://192.168.1.162:8080/', {
+                            let resp = fetch('http://localhost:5000/', {
                               method: 'POST',
                               body: formData
-                            }).then((data)=>{console.log(data.json())})
-
-                          }
-                        }
-      >
-        Accept Photo
-      </Button>
-      <Button
-        mode="outlined"
-        // onPress={() => navigation.navigate('PhotoAccept', { image2: image })}
-        onPress={() =>  {
-                          const response = async () => {
-                            await fetch('http://192.168.1.162:8080/hello', {
-                              method: 'POST',
-                              headers: {'Content-Type':'multipart/form-data',
-                                        'Access-Control-Allow-Origin': '*'},
+                            }).then((data)=>{
+                              data.json().then((properties) => {
+                                if(validPhoto(properties["feedback"])) {
+                                  navigation.navigate('PhotoAccept', { image2: image });
+                                } 
+                              })
                             })
-
-                              .then((data) => {console.log(data.json())});
-                          }
                         }
                 }
       >
-    Send Post
+        Accept Photo
       </Button>
     </Background>
   )
