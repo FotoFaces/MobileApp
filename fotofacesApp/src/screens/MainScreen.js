@@ -69,7 +69,8 @@ export default function MainScreen({ navigation }) {
       </Paragraph>
       <Button
         mode="contained"
-        onPress={openCamera}
+        //onPress={openCamera}
+        onPress={() => navigation.navigate('CameraApp')}
       >
         Take a Photo
       </Button>

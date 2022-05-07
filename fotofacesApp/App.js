@@ -11,6 +11,7 @@ import {
   PhotoAccept,
   PhotoChoice,
   MainScreen,
+  CameraApp,
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -20,7 +21,7 @@ export default function App() {
     <Provider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="StartScreen"
+          initialRouteName="MainScreen"
           screenOptions={{
             headerShown: false,
           }}
@@ -31,6 +32,7 @@ export default function App() {
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="PhotoChoice" component={PhotoChoice} />
           <Stack.Screen name="PhotoAccept" component={PhotoAccept} />
+          <Stack.Screen name="CameraApp" component={CameraApp} />
           <Stack.Screen
             name="ResetPasswordScreen"
             component={ResetPasswordScreen}
