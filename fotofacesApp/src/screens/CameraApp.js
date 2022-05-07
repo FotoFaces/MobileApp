@@ -41,9 +41,25 @@ export default function CameraApp() {
     }
   }
 
+
+  function box() {
+    if (faceData.length === 0) {
+      return (
+        <View style={styles.faces}>
+          <Text style={styles.faceDesc}>No faces :(</Text>
+        </View>
+      );
+    } else {
+        return (
+
+        <View width={faceData.at}></View>
+      );
+    }
+  }
   const handleFacesDetected = ({ faces }) => {
     setFaceData(faces);
-    console.log(faces); //prints the array with informations of the face
+    console.log("BEGGINING");
+    console.log(faces.rightEyeOpenProbability); //prints the array with informations of the face
   }
 
   return (
@@ -59,7 +75,7 @@ export default function CameraApp() {
         tracking: true
       }}>
       
-    </Camera>//be careful with the line above  {getFaceDataView()}
+    </Camera>//be careful with the line above  {getFaceDataView()}{box()}
   );
 }
 
@@ -75,8 +91,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     margin: 16,
-    width:80,
-    height:10
   },
   faceDesc: {
     fontSize: 20
