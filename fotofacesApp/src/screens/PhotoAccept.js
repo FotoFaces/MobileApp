@@ -9,6 +9,24 @@ import { Text, View, StyleSheet } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 
 export default function PhotoChoice({ navigation }) {
+  const { email, identifier, old_image, image } = route.params;
+
+  const acceptPhoto = () => {
+    // update photo
+    let formData = new FormData();
+    formData.append("param", image);
+
+    fetch('http://20.76.47.56:8393/image/'+identifier, {
+      method: 'POST',
+      body: formData
+    }).then((data)=>{
+      data.json().then((properties) => {
+        navigation.navigate('StartScreen');
+      })
+    })
+  }
+
+
   const route = useRoute();
   return (
     <Background>
@@ -17,7 +35,7 @@ export default function PhotoChoice({ navigation }) {
         style={styles.headline}> ✅ Valid Photo !! 
       </Text>
       <Text>{"\n"}</Text>
-      <DisplayAnImage photo_url={route.params.image2} />
+      <DisplayAnImage photo_url={image} />
       <View style={styles.container}>
         <Paragraph>
           Are you sure you want to submit this photo?
@@ -26,13 +44,24 @@ export default function PhotoChoice({ navigation }) {
       <View style={styles.container}>
         <View style={styles.button_1}>
           <Button
-            mode="outlined">
+            mode="outlined"
+            onPress={acceptPhoto}>
               Yes
           </Button>
         </View>
         <View style={styles.button_2}>
           <Button
-            mode="outlined">
+            mode="outlined"
+            onPress={
+              // back to main screen
+              navigation.navigate('MainScreen', 
+              {
+                email: email,
+                identifier: identifier,
+                old_photo: old_image
+              }
+              )
+            }>
             No
           </Button>
         </View>

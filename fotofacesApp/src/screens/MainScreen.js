@@ -98,13 +98,17 @@ export default function MainScreen({ route, navigation }) {
                             formData.append("id", identifier);
                             formData.append("candidate", image);
 
-                            let resp = fetch('http://localhost:5000/', {
+                            let resp = fetch('http://20.76.47.56:5000/', {
                               method: 'POST',
                               body: formData
                             }).then((data)=>{
                               data.json().then((properties) => {
                                 if(validPhoto(properties["feedback"])) {
-                                  navigation.navigate('PhotoAccept', { image2: image });
+                                  navigation.navigate('PhotoAccept', { 
+                                    email: email.value,
+                                    identifier: logins["id"],
+                                    old_photo: logins["photo"],
+                                    image: image });
                                 } 
                               })
                             })
