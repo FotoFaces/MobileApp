@@ -2,6 +2,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Camera } from 'expo-camera';
 import * as FaceDetector from 'expo-face-detector';
+import {TouchableOpacity} from 'react-native';
+import PictureIcon from '../components/TakePictureIcon'
+
 
 export default function CameraApp() {
   const [hasPermission, setHasPermission] = React.useState();
@@ -49,18 +52,28 @@ export default function CameraApp() {
           <Text style={styles.faceDesc}>No faces :(</Text>
         </View>
       );
-    } else {
-        return (
-
-        <View width={faceData.at}></View>
+    }
+    else{
+      if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>900){
+        return(<View style={{position:'absolute',top:faceData[0]["bounds"]["origin"]["y"],left:faceData[0]["bounds"]["origin"]["x"],width:faceData[0]["bounds"]["size"]["width"], height:faceData[0]["bounds"]["size"]["height"], borderWidth: 5, borderColor:"red"}}><Text style={{color:'red',fontSize:40}}>Too close!!</Text></View>);
+      }else{
+      return(<View style={{position:'absolute',top:faceData[0]["bounds"]["origin"]["y"],left:faceData[0]["bounds"]["origin"]["x"],width:faceData[0]["bounds"]["size"]["width"], height:faceData[0]["bounds"]["size"]["height"], borderWidth: 5}}></View>
       );
+      }
     }
   }
+
+  function takePictureNow() {
+    if (faceData.length === 0) {
+      return (alert("No face found!!"));
+      }
+  }
+
   const handleFacesDetected = ({ faces }) => {
     setFaceData(faces);
-    console.log("BEGGINING");
-    console.log(faces.rightEyeOpenProbability); //prints the array with informations of the face
+    console.log(faces);
   }
+  
 
   return (
     <Camera 
@@ -74,9 +87,20 @@ export default function CameraApp() {
         minDetectionInterval: 100,
         tracking: true
       }}>
-      
-    </Camera>//be careful with the line above  {getFaceDataView()}{box()}
+        <TouchableOpacity
+              style={{
+                alignContent: 'center',
+                position: 'absolute',
+                bottom: 10
+            }}
+            onPress={() => takePictureNow()}>
+            <PictureIcon />
+        </TouchableOpacity>
+      {box()}
+    </Camera>
   );
+
+  
 }
 
 const styles = StyleSheet.create({
