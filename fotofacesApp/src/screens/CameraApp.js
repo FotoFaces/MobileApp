@@ -6,9 +6,11 @@ import {TouchableOpacity} from 'react-native';
 import PictureIcon from '../components/TakePictureIcon'
 
 
-export default function CameraApp() {
+export default function CameraApp({ navigation }) {
   const [hasPermission, setHasPermission] = React.useState();
+  const [camera, setCamera] = React.useState(null);
   const [faceData, setFaceData] = React.useState([]);
+  const [image, setImage] = React.useState(null);
 
   React.useEffect(() => {
     (async () => {
@@ -19,29 +21,6 @@ export default function CameraApp() {
 
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
-  }
-
-  function getFaceDataView() {
-    if (faceData.length === 0) {
-      return (
-        <View style={styles.faces}>
-          <Text style={styles.faceDesc}>No faces :(</Text>
-        </View>
-      );
-    } else {
-      return faceData.map((face, index) => {
-        const eyesShut = face.rightEyeOpenProbability < 0.4 && face.leftEyeOpenProbability < 0.4;
-        const winking = !eyesShut && (face.rightEyeOpenProbability < 0.4 || face.leftEyeOpenProbability < 0.4);
-        const smiling = face.smilingProbability > 0.7;
-        return (
-          <View style={styles.faces} key={index}>
-            <Text style={styles.faceDesc}>Eyes Shut: {eyesShut.toString()}</Text>
-            <Text style={styles.faceDesc}>Winking: {winking.toString()}</Text>
-            <Text style={styles.faceDesc}>Smiling: {smiling.toString()}</Text>
-          </View>
-        );
-      });
-    }
   }
 
 
@@ -63,15 +42,22 @@ export default function CameraApp() {
     }
   }
 
-  function takePictureNow() {
+  const takePictureNow = async () => {
     if (faceData.length === 0) {
       return (alert("No face found!!"));
+    }
+    else{
+      if(camera){
+        const data = await camera.takePictureAsync(null)
+        setImage(data.uri);
+        console.log(data.uri)
+        navigation.navigate('MainScreen', {image2: image})
       }
+    }
   }
 
   const handleFacesDetected = ({ faces }) => {
     setFaceData(faces);
-    console.log(faces);
   }
   
 
@@ -79,6 +65,7 @@ export default function CameraApp() {
     <Camera 
       type={Camera.Constants.Type.front}
       style={styles.camera}
+      ref={ref => setCamera(ref)}
       onFacesDetected={handleFacesDetected}
       faceDetectorSettings={{
         mode: FaceDetector.FaceDetectorMode.fast,
@@ -107,14 +94,14 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   faces: {
     backgroundColor: '#ffffff',
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 16,
+    margin: 16
   },
   faceDesc: {
     fontSize: 20
