@@ -52,6 +52,59 @@ export default function LoginScreen({ navigation }) {
     return 
   }
 
+  const onLoginSSO = () => {
+    const acceptedAccessTokenInfo = ["access_token", "token_type", "expires_in", "id_token"];
+
+    // WSO2 APPLICATION, CALLs AND ENDPOINT DETAILS
+    const authorizeEndpoint = "https://wso2-gw.ua.pt/authorize";
+    const tokenEndpoint = "https://wso2-gw.ua.pt/token";
+    const redirectURI = "http://localhost";
+    const consumerKey = "agh44RajMJcYvCIq3lSMrutfPJ0a"
+    // Base64 encoded string: <Consumer Key>:<Consumer Secret>
+    const authorizationBase64Credentials = "YWdoNDRSYWpNSmNZdkNJcTNsU01ydXRmUEowYTpKWVNZNU1iYkJQR0Y4WURYZmdoeUdKRnVmNFVh";
+
+    location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
+
+    // should wait for response    
+
+    let searchParams = new URL(document.location).searchParams;
+
+    if (searchParams.has("code")) {
+
+      let code = searchParams.get("code");
+
+      alert(code)
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/x-www-form-urlencoded")
+      myHeaders.append("Authorization", `Basic ${authorizationBase64Credentials}`);
+
+      fetch(`${tokenEndpoint}?code=${code}&redirect_uri=${redirectURI}&grant_type=authorization_code`, {
+          method: "POST",
+          headers: myHeaders
+      }).then(response => response.json())
+        .then(res => {
+            Object.keys(res).forEach((item, index) => {
+                if (acceptedAccessTokenInfo.includes(item)) {
+                  navigation.navigate('MainScreen', 
+                  {
+                    email: email.value,
+                    identifier: logins["id"],
+                    old_photo: logins["photo"]
+                  }
+                  );
+                }
+            });
+        })
+        .catch(err => {
+            console.log(`Received an error: ${err}`);
+        });
+    }
+
+    return
+  }
+
+
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
@@ -86,6 +139,10 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.forgot}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
+
+      <Button mode="contained" onPress={onLoginSSO}>
+        SSO Login
+      </Button>
 
       <Button mode="contained" onPress={onLoginPressed}>
         Login

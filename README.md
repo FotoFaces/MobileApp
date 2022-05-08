@@ -24,8 +24,8 @@ npm install expo-cli --global
 npm start
 
 ## Needed
-expo-image-picker
+npm install expo-image-picker
 npm install form-data-encoder
-formdata-node
+npm install formdata-node
 
 npm install react-native-md5 --save
