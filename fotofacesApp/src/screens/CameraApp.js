@@ -6,7 +6,7 @@ import {TouchableOpacity} from 'react-native';
 import PictureIcon from '../components/TakePictureIcon'
 
 
-export default function CameraApp({ navigation }) {
+export default function CameraApp({navigation}) {
   const [hasPermission, setHasPermission] = React.useState();
   const [camera, setCamera] = React.useState(null);
   const [faceData, setFaceData] = React.useState([]);
@@ -51,7 +51,9 @@ export default function CameraApp({ navigation }) {
         const data = await camera.takePictureAsync(null)
         setImage(data.uri);
         console.log(data.uri)
-        navigation.navigate('MainScreen', {image2: image})
+        localStorage.setItem('cameraPic',image)
+        navigation.navigate('MainScreen')
+
       }
     }
   }
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   faces: {
     backgroundColor: '#ffffff',

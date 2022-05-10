@@ -13,12 +13,18 @@ import {useRoute} from '@react-navigation/native';
 
 
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ route, navigation }) {
 
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log("i was here")
+      setImageUri(localStorage.getItem('cameraPic'))
+    });return unsubscribe;
+  }, [navigation]);
 
 
   const pickImage = async () => {
@@ -31,24 +37,20 @@ export default function MainScreen({ navigation }) {
       base64: true,
     });
 
-    console.log("sdfaf")
-    console.log(result.base64);
-
     if (!result.cancelled) {
       setImage(result.base64);
       setImageUri(result.uri)
-      console.log(result.uri)
     }
     
   };
-  const openCamera = async () => {
-    console.log("auaua")
-    await navigation.navigate('CameraApp')
-    console.log("oeoe")
-    const route = useRoute();
-    if (route !='undefined') {
-      setImageUri(route.params.image2)
-    }
+  const SeeIfImage = async () => {
+    console.log("mmmmmmm")
+    const route = useRoute()
+    console.log(route)
+      if(route==="undefined"){
+        console.log(imageUri)
+        return imageUri
+      }
   }
   return (
     <Background>
@@ -59,8 +61,8 @@ export default function MainScreen({ navigation }) {
       </Paragraph>
       <Button
         mode="contained"
-        onPress={openCamera}
-        //onPress={() => navigation.navigate('CameraApp')}
+        //onPress={openCamera}
+        onPress={() => navigation.navigate('CameraApp') }
       >
         Take a Photo
       </Button>
