@@ -10,9 +10,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../core/theme'
 
 
-
-
-
 export default function MainScreen({ route, navigation }) {
 
   const [cameraPermission, setCameraPermission] = useState(null);
@@ -53,6 +50,31 @@ export default function MainScreen({ route, navigation }) {
       setImage(result.base64);
       setImageUri(result.uri)
     }
+  }
+
+  const validation = () => {
+    let formData = new FormData();
+    formData.append("id", identifier);
+    formData.append("candidate", image);
+
+    let resp = fetch('http://20.76.47.56:5000/', {
+      method: 'POST',
+      body: formData
+    }).then((data)=>{
+      data.json().then((properties) => {
+        if(validPhoto(properties["feedback"])) {
+          navigation.navigate('PhotoAccept', { 
+            email: email.value,
+            identifier: identifier,
+            old_photo: old_photo,
+            image: image,
+            imageUri: imageUri 
+          });
+        } else {
+          alert("ERROR!!! DO SOME SHIT HERE IDK TBH")
+        }
+      })
+    })
   }
 
 
@@ -106,27 +128,7 @@ export default function MainScreen({ route, navigation }) {
         }}/>
       <Button
         mode="outlined"
-        onPress={() =>  {
-          let formData = new FormData();
-          formData.append("id", identifier);
-          formData.append("candidate", image);
-
-          let resp = fetch('http://20.76.47.56:5000/', {
-            method: 'POST',
-            body: formData
-          }).then((data)=>{
-            data.json().then((properties) => {
-              if(validPhoto(properties["feedback"])) {
-                navigation.navigate('PhotoAccept', { 
-                  email: email.value,
-                  identifier: logins["id"],
-                  old_photo: logins["photo"],
-                  image: image });
-              } 
-            })
-          })
-                        }
-                }
+        onPress={validation}
       >
         Validate Photo
       </Button>
