@@ -8,6 +8,7 @@ import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 import * as ImagePicker from 'expo-image-picker';
 import {useRoute} from '@react-navigation/native';
+import ls from 'local-storage'
 
 
 
@@ -22,7 +23,10 @@ export default function MainScreen({ route, navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       console.log("i was here")
-      setImageUri(localStorage.getItem('cameraPic'))
+      const preview = ls.get('ImageUri')
+      if(preview !== null){
+        setImageUri(preview)
+      }
     });return unsubscribe;
   }, [navigation]);
 

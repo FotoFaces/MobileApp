@@ -4,13 +4,13 @@ import { Camera } from 'expo-camera';
 import * as FaceDetector from 'expo-face-detector';
 import {TouchableOpacity} from 'react-native';
 import PictureIcon from '../components/TakePictureIcon'
+import ls from 'local-storage'
 
 
 export default function CameraApp({navigation}) {
   const [hasPermission, setHasPermission] = React.useState();
   const [camera, setCamera] = React.useState(null);
   const [faceData, setFaceData] = React.useState([]);
-  const [image, setImage] = React.useState(null);
 
   React.useEffect(() => {
     (async () => {
@@ -23,7 +23,14 @@ export default function CameraApp({navigation}) {
     return <Text>No access to camera</Text>;
   }
 
-
+  // const detections = {
+  //   BLINK: { promptText: "Blink both eyes", minProbability: 0.4 },
+  //   TURN_HEAD_LEFT: { promptText: "Turn head left", maxAngle: -7.5 },
+  //   TURN_HEAD_RIGHT: { promptText: "Turn head right", minAngle: 7.5 },
+  //   NOD: { promptText: "Nod", minDiff: 1 },
+  //   SMILE: { promptText: "Smile", minProbability: 0.7 }
+  // }
+  
   function box() {
     if (faceData.length === 0) {
       return (
@@ -49,9 +56,7 @@ export default function CameraApp({navigation}) {
     else{
       if(camera){
         const data = await camera.takePictureAsync(null)
-        setImage(data.uri);
-        console.log(data.uri)
-        localStorage.setItem('cameraPic',image)
+        ls.set('ImageUri',data.uri)
         navigation.navigate('MainScreen')
 
       }
@@ -85,6 +90,11 @@ export default function CameraApp({navigation}) {
             onPress={() => takePictureNow()}>
             <PictureIcon />
         </TouchableOpacity>
+        {/* <Text style={styles.action}>
+          {state.faceDetected &&
+            detections[state.detectionsList[state.currentDetectionIndex]]
+              .promptText}
+        </Text> */}
       {box()}
     </Camera>
   );
@@ -107,5 +117,11 @@ const styles = StyleSheet.create({
   },
   faceDesc: {
     fontSize: 20
+  },
+  action: {
+    fontSize: 24,
+    textAlign: "center",
+    marginTop: 10,
+    fontWeight: "bold"
   }
 });
