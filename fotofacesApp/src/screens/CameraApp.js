@@ -11,6 +11,7 @@ export default function CameraApp({navigation}) {
   const [hasPermission, setHasPermission] = React.useState();
   const [camera, setCamera] = React.useState(null);
   const [faceData, setFaceData] = React.useState([]);
+  const[count,setCount]=React.useState(0);
 
   React.useEffect(() => {
     (async () => {
@@ -22,14 +23,6 @@ export default function CameraApp({navigation}) {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-
-  // const detections = {
-  //   BLINK: { promptText: "Blink both eyes", minProbability: 0.4 },
-  //   TURN_HEAD_LEFT: { promptText: "Turn head left", maxAngle: -7.5 },
-  //   TURN_HEAD_RIGHT: { promptText: "Turn head right", minAngle: 7.5 },
-  //   NOD: { promptText: "Nod", minDiff: 1 },
-  //   SMILE: { promptText: "Smile", minProbability: 0.7 }
-  // }
   
   function box() {
     if (faceData.length === 0) {
@@ -37,16 +30,52 @@ export default function CameraApp({navigation}) {
         <View style={styles.faces}>
           <Text style={styles.faceDesc}>No faces :(</Text>
         </View>
-      );
+      );  
     }
     else{
-      if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>900){
-        return(<View style={{position:'absolute',top:faceData[0]["bounds"]["origin"]["y"],left:faceData[0]["bounds"]["origin"]["x"],width:faceData[0]["bounds"]["size"]["width"], height:faceData[0]["bounds"]["size"]["height"], borderWidth: 5, borderColor:"red"}}><Text style={{color:'red',fontSize:40}}>Too close!!</Text></View>);
-      }else{
-      return(<View style={{position:'absolute',top:faceData[0]["bounds"]["origin"]["y"],left:faceData[0]["bounds"]["origin"]["x"],width:faceData[0]["bounds"]["size"]["width"], height:faceData[0]["bounds"]["size"]["height"], borderWidth: 5}}></View>
-      );
+      console.log(count)
+      if(count==0){
+        if(faceData[0]["leftEyeOpenProbability"] < 0.4 || faceData[0]["rightEyeOpenProbability"] < 0.4){
+          setCount(1)
+        }else{
+          return(
+            <View style={styles.faces}>
+              <Text style={styles.faceDesc}>Please Wink your eyes once</Text>
+            </View>
+          )
+        }
       }
+      if(count==1){
+        if(faceData[0]["leftEyeOpenProbability"] > 0.7){
+          setCount(2)
+        }else{
+          return(
+            <View style={styles.faces}>
+              <Text style={styles.faceDesc}>Please Smile</Text>
+            </View>
+          )
+        }
+      }
+      // if(counter==3){
+      //   if(faceData.rightEyeOpenProbability<0.4 || faceData.leftEyeOpenProbability < 0.4){
+      //     counter+=1
+      //   }else{
+      //     return(
+      //       <View style={styles.faces}>
+      //         <Text style={styles.faceDesc}>Please Wink your eyes once</Text>
+      //       </View>
+      //     )
+      //   }
+      // }
     }
+    // else{
+    //   if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>900){
+    //     return(<View style={{position:'absolute',top:faceData[0]["bounds"]["origin"]["y"],left:faceData[0]["bounds"]["origin"]["x"],width:faceData[0]["bounds"]["size"]["width"], height:faceData[0]["bounds"]["size"]["height"], borderWidth: 5, borderColor:"red"}}><Text style={{color:'red',fontSize:40}}>Too close!!</Text></View>);
+    //   }else{
+    //   return(<View style={{position:'absolute',top:faceData[0]["bounds"]["origin"]["y"],left:faceData[0]["bounds"]["origin"]["x"],width:faceData[0]["bounds"]["size"]["width"], height:faceData[0]["bounds"]["size"]["height"], borderWidth: 5}}></View>
+    //   );
+    //   }
+    // }
   }
 
   const takePictureNow = async () => {
@@ -65,6 +94,7 @@ export default function CameraApp({navigation}) {
 
   const handleFacesDetected = ({ faces }) => {
     setFaceData(faces);
+    console.log(faces);
   }
   
 
@@ -77,7 +107,7 @@ export default function CameraApp({navigation}) {
       faceDetectorSettings={{
         mode: FaceDetector.FaceDetectorMode.fast,
         detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
-        runClassifications: FaceDetector.FaceDetectorClassifications.none,
+        runClassifications: FaceDetector.FaceDetectorClassifications.all,
         minDetectionInterval: 100,
         tracking: true
       }}>
@@ -90,11 +120,6 @@ export default function CameraApp({navigation}) {
             onPress={() => takePictureNow()}>
             <PictureIcon />
         </TouchableOpacity>
-        {/* <Text style={styles.action}>
-          {state.faceDetected &&
-            detections[state.detectionsList[state.currentDetectionIndex]]
-              .promptText}
-        </Text> */}
       {box()}
     </Camera>
   );

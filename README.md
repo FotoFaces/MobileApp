@@ -25,5 +25,17 @@ npm start
 
 ## Needed
 expo-image-picker
+
 npm install form-data-encoder
+
 formdata-node
+
+npm install @react-native-async-storage/async-storage
+
+npm install local-storage --save
+
+npm install camera
+
+expo install expo-camera
+
+expo install expo-face-detector
