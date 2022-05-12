@@ -8,6 +8,8 @@ import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../core/theme'
+import {useRoute} from '@react-navigation/native';
+import ls from 'local-storage'
 
 
 export default function MainScreen({ route, navigation }) {
@@ -17,6 +19,17 @@ export default function MainScreen({ route, navigation }) {
   const [imageUri, setImageUri] = useState(null);
   const [invalidPhoto, setInvalidPhoto] = useState(null);
   const { email, identifier, old_photo, name } = route.params;
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log("i was here")
+      const preview = ls.get('ImageUri')
+      if(preview !== null){
+        setImageUri(preview)
+      }
+    });return unsubscribe;
+  }, [navigation]);
+
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -32,26 +45,8 @@ export default function MainScreen({ route, navigation }) {
       setImage(result.base64);
       setImageUri(result.uri)
     }
+    
   };
-  const openCamera = async () => {
-    // Ask the user for the permission to access the camera
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      quality: 1,
-      base64: true,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.base64);
-      setImageUri(result.uri)
-    }
-  }
 
   const validation = () => {
     let formData = new FormData();
@@ -69,8 +64,8 @@ export default function MainScreen({ route, navigation }) {
             identifier: identifier,
             old_photo: old_photo,
             name: name,
-            image: image,
-            imageUri: imageUri
+            image: ls.get("Image64"),
+            imageUri: ls.get("ImageUri")
           });
         }
       })
@@ -170,7 +165,8 @@ export default function MainScreen({ route, navigation }) {
       </Paragraph>
       <Button
         mode="contained"
-        onPress={openCamera}
+        //onPress={openCamera}
+        onPress={() => navigation.navigate('CameraApp') }
       >
         Take a Photo
       </Button>

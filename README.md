@@ -24,8 +24,20 @@ npm install expo-cli --global
 npm start
 
 ## Needed
-npm install expo-image-picker
+expo-image-picker
+
 npm install form-data-encoder
-npm install formdata-node
+
+formdata-node
+
+npm install @react-native-async-storage/async-storage
+
+npm install local-storage --save
+
+npm install camera
+
+expo install expo-camera
+
+expo install expo-face-detector
 
 npm install react-native-md5 --save
