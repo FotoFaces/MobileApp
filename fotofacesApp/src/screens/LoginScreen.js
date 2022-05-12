@@ -38,7 +38,8 @@ export default function LoginScreen({ navigation }) {
           {
             email: email.value,
             identifier: logins["id"],
-            old_photo: logins["photo"]
+            old_photo: logins["photo"],
+            name: logins["name"]
           }
           );
         }

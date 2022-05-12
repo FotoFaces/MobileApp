@@ -15,7 +15,8 @@ export default function MainScreen({ route, navigation }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
-  const { email, identifier, old_photo } = route.params;
+  const [invalidPhoto, setInvalidPhoto] = useState(null);
+  const { email, identifier, old_photo, name } = route.params;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -57,40 +58,99 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://20.76.47.56:5000/', {
+    let resp = fetch('http://172.19.0.3:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
       data.json().then((properties) => {
-        if(validPhoto(properties["feedback"])) {
+        if(validPhoto(properties)) {
           navigation.navigate('PhotoAccept', { 
             email: email.value,
             identifier: identifier,
             old_photo: old_photo,
+            name: name,
             image: image,
-            imageUri: imageUri 
+            imageUri: imageUri
           });
-        } else {
-          alert("ERROR!!! DO SOME SHIT HERE IDK TBH")
         }
       })
     })
   }
 
+// Brightness: 141.30041354355131
+// ​
+// "Colored Picture": true
+// ​
+// "Crop Position": Array(4) [ 43, 24, 228, … ]     ->
+// ​
+// Cropping: true                                   ->
+// ​
+// "Eyes Open": 0.3252342680307727
+// ​
+// "Face Candidate Detected": true
+// ​
+// "Face Recognition": 0.6674974599316463
+// ​
+// Glasses: false                                   ->
+// ​
+// "Head Pose": Array(3) [ -6.101179017848855, -0.9526796653174112, -0.8817007163672532 ]       ->
+// ​
+// "Image Quality": 70.59932708740234
+// ​
+// Resize: 2.7027027027027026                                         ->
+// ​
+// Sunglasses: Array [ 20.95436507936509, 27.22477324263039 ]         ->
+// ​
+// focus: 86.36363636363637
+
+
 
   // PHOTO VALIDATION
   function validPhoto(resp) {
-    resp = JSON.parse(resp)
+    console.log(resp)
 
-    if (resp["Colored Picture"] != true) {
+    if (!"Brightness" in Object.keys(resp) || resp["Brightness"] < 100) {     // values
+      setInvalidPhoto("Picture needs to be bright!!")
       return false
     }
 
-    if (resp["Face Candidate Detected"] != true) {
+    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != true) {
+      setInvalidPhoto("Picture needs to be colored!!")
       return false
     }
 
-    return false
+    if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0) {     // values
+      setInvalidPhoto("Face needs to have the eyes open!!")
+      return false
+    }
+
+    if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0) {     // values
+      setInvalidPhoto("Face needs to have the eyes open!!")
+      return false
+    }
+
+    if (!"Face Recognition" in Object.keys(resp) || resp["Face Recognition"] > 0.6) {
+      setInvalidPhoto("Picture needs to be the same person as the old image!!")
+      return false
+    }
+
+    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != true) {
+      setInvalidPhoto("No face detected!!")
+      return false
+    }
+
+    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] < 50) {     // values
+      setInvalidPhoto("Image Quality needs to be better!!")
+      return false
+    }
+
+    if (!"focus" in Object.keys(resp) || resp["focus"] < 30) {     // values
+      setInvalidPhoto("Image shouldn't be blurred!!")
+      return false
+    }
+
+    setInvalidPhoto(null)
+    return true
   }
 
   return (
@@ -101,7 +161,7 @@ export default function MainScreen({ route, navigation }) {
           <View style={styles.body}>
             <View style={styles.bodyContent}>
               <Text style={styles.name}>{email}</Text>
-              <Text style={styles.info}>{identifier}</Text>
+              <Text style={styles.info}>{name}</Text>
             </View>
         </View>
       </View>
@@ -133,6 +193,12 @@ export default function MainScreen({ route, navigation }) {
         Validate Photo
       </Button>
       </> : null}
+
+      {invalidPhoto !== null ? 
+      <>
+      <Text style={styles.error}>{invalidPhoto}</Text>
+      </>
+      : null}
 
     </Background>
   )
@@ -182,5 +248,10 @@ const styles = StyleSheet.create({
     color: "#696969",
     marginTop:10,
     textAlign: 'center'
+  },
+  error: {
+    fontSize: 20,
+    color: theme.colors.error,
+    paddingTop: 8,
   }
 });

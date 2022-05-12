@@ -10,9 +10,7 @@ import { Text, View, StyleSheet, Image } from 'react-native';
 
 export default function PhotoAccept({ route, navigation }) {
 
-  const { email, identifier, old_photo, image, imageUri } = route.params;
-
-  console.log(old_photo)
+  const { email, identifier, old_photo, name, image, imageUri } = route.params;
 
   const acceptPhoto = () => {
     // update photo
