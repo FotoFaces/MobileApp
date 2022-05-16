@@ -1,10 +1,24 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, Dimensions, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Camera } from 'expo-camera';
 import * as FaceDetector from 'expo-face-detector';
 import {TouchableOpacity} from 'react-native';
 import PictureIcon from '../components/TakePictureIcon'
 import ls from 'local-storage'
+import MaskedView from "@react-native-community/masked-view"
+import { AnimatedCircularProgress } from "react-native-circular-progress"
+
+
+
+const { width: windowWidth } = Dimensions.get("window")
+ 
+const PREVIEW_SIZE = 325
+const PREVIEW_RECT = {
+  minX: (windowWidth - PREVIEW_SIZE) / 2,
+  minY: 50,
+  width: PREVIEW_SIZE,
+  height: PREVIEW_SIZE
+}
 
 
 export default function CameraApp({navigation}) {
@@ -26,6 +40,9 @@ export default function CameraApp({navigation}) {
   
   function box() {
     if (faceData.length === 0) {
+      if(count>0){
+        setCount(0)
+      }
       return (
         <View style={styles.faces}>
           <Text style={styles.faceDesc}>No faces :(</Text>
@@ -33,7 +50,6 @@ export default function CameraApp({navigation}) {
       );  
     }
     else{
-      console.log(count)
       if(count==0){
         if(faceData[0]["leftEyeOpenProbability"] < 0.4 || faceData[0]["rightEyeOpenProbability"] < 0.4){
           setCount(1)
@@ -46,7 +62,7 @@ export default function CameraApp({navigation}) {
         }
       }
       if(count==1){
-        if(faceData[0]["leftEyeOpenProbability"] > 0.7){
+        if(faceData[0]["smilingProbability"] > 0.7){
           setCount(2)
         }else{
           return(
@@ -83,56 +99,71 @@ export default function CameraApp({navigation}) {
       return (alert("No face found!!"));
     }
     else{
-      if(camera){
+      if(camera && count==2){
         const data = await camera.takePictureAsync(null)
         ls.set('ImageUri',data.uri)
         navigation.navigate('MainScreen')
 
+      }
+      else{
+        return (alert("Please complete the steps given."));
       }
     }
   }
 
   const handleFacesDetected = ({ faces }) => {
     setFaceData(faces);
-    console.log(faces);
   }
   
 
   return (
-    <Camera 
-      type={Camera.Constants.Type.front}
-      style={styles.camera}
-      ref={ref => setCamera(ref)}
-      onFacesDetected={handleFacesDetected}
-      faceDetectorSettings={{
-        mode: FaceDetector.FaceDetectorMode.fast,
-        detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
-        runClassifications: FaceDetector.FaceDetectorClassifications.all,
-        minDetectionInterval: 100,
-        tracking: true
-      }}>
-        <TouchableOpacity
-              style={{
-                alignContent: 'center',
-                position: 'absolute',
-                bottom: 10
+    <SafeAreaView style={StyleSheet.absoluteFill}>
+      <MaskedView
+        style={StyleSheet.absoluteFill}
+        maskElement={<View style={styles.mask} />}
+      >
+        <Camera 
+          type={Camera.Constants.Type.front}
+          style={{width:windowWidth,
             }}
-            onPress={() => takePictureNow()}>
-            <PictureIcon />
-        </TouchableOpacity>
+          ref={ref => setCamera(ref)}
+          onFacesDetected={handleFacesDetected}
+          faceDetectorSettings={{
+            mode: FaceDetector.FaceDetectorMode.fast,
+            detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
+            runClassifications: FaceDetector.FaceDetectorClassifications.all,
+            minDetectionInterval: 100,
+            tracking: true
+          }}>
+            <AnimatedCircularProgress
+                style={styles.circularProgress}
+                size={PREVIEW_SIZE}
+                width={5}
+                backgroundWidth={7}
+                fill={0}
+                tintColor="#3485FF"
+                backgroundColor="#e8e8e8"
+              />
+            {/* <TouchableOpacity
+                  style={{
+                    alignContent: 'center',
+                    position: 'absolute',
+                    bottom: 10
+                }}
+                onPress={() => takePictureNow()}>
+                <PictureIcon />
+            </TouchableOpacity> */}
+        </Camera>
+      </MaskedView>
       {box()}
-    </Camera>
+    </SafeAreaView>
+
   );
 
   
 }
 
 const styles = StyleSheet.create({
-  camera: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   faces: {
     backgroundColor: '#ffffff',
     alignSelf: 'stretch',
@@ -143,10 +174,35 @@ const styles = StyleSheet.create({
   faceDesc: {
     fontSize: 20
   },
+  mask: {
+    borderRadius: PREVIEW_SIZE / 2,
+    height: PREVIEW_SIZE,
+    width: PREVIEW_SIZE,
+    marginTop: PREVIEW_RECT.minY,
+    alignSelf: "center",
+    backgroundColor: "white"
+  },
+  circularProgress: {
+    width: PREVIEW_SIZE,
+    height: PREVIEW_SIZE,
+    marginTop: PREVIEW_RECT.minY,
+    marginLeft: PREVIEW_RECT.minX
+  },
+  instructions: {
+    fontSize: 20,
+    textAlign: "center",
+    top: 25,
+    position: "absolute"
+  },
+  instructionsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: PREVIEW_RECT.minY + PREVIEW_SIZE
+  },
   action: {
     fontSize: 24,
     textAlign: "center",
-    marginTop: 10,
     fontWeight: "bold"
   }
 });
