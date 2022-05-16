@@ -17,7 +17,7 @@ export default function PhotoAccept({ route, navigation }) {
     let formData = new FormData();
     formData.append("param", image);
 
-    fetch('http://localhost:8393/image/'+identifier, {
+    fetch('http://192.168.1.70:8393/image/'+identifier, {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -38,7 +38,7 @@ export default function PhotoAccept({ route, navigation }) {
           </View>
           <View style={{marginLeft: 206, marginTop: -20}}>
             <Paragraph>New Photo</Paragraph>
-            <Image style={styles.avatar} source={imageUri} />
+            <Image style={styles.avatar} source={{uri: imageUri}} />
           </View>
         </View>
         <View style={{marginTop: 186}}>

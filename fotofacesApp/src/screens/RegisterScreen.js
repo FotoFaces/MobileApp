@@ -40,25 +40,6 @@ export default function RegisterScreen({ navigation }) {
       setImageUri(result.uri)
     }
   };
-  const openCamera = async () => {
-    // Ask the user for the permission to access the camera
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      quality: 1,
-      base64: true,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.base64);
-      setImageUri(result.uri)
-    }
-  }
 
   const onSignUpPressed = () => {
     const nameError = nameValidator(name.value)
@@ -83,7 +64,7 @@ export default function RegisterScreen({ navigation }) {
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     
-    let resp = fetch('http://localhost:8393/user/2', {
+    let resp = fetch('http://192.168.1.70:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -99,7 +80,8 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <Background>
-      <BackButton goBack={navigation.goBack} />
+      <View style={{marginTop: '-30%'}}></View>
+      <BackButton goBack={navigation.goBack}/>
       <View>
         {image !== null ? <><Image style={styles.avatar} source={{uri: imageUri}}/></> : <><Image style={styles.avatar} source={require('../assets/logo.png')}/></>}
       </View>
@@ -134,9 +116,10 @@ export default function RegisterScreen({ navigation }) {
         errorText={password.error}
         secureTextEntry
       />
-      <Button
-        mode="outlined"
-        onPress={openCamera}
+       <Button
+        mode="contained"
+        //onPress={openCamera}
+        onPress={() => navigation.navigate('CameraApp') }
       >
         Take a Photo
       </Button>

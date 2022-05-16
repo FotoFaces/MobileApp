@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, Platform, StyleSheet, Text } from 'react-native'
+import { Image, View, Platform, StyleSheet, Text, ScrollView } from 'react-native'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
@@ -24,8 +24,10 @@ export default function MainScreen({ route, navigation }) {
     const unsubscribe = navigation.addListener('focus', () => {
       console.log("i was here")
       const preview = ls.get('ImageUri')
+      const preview64 = ls.get("Image64")
       if(preview !== null){
         setImageUri(preview)
+        setImage(preview64)
       }
     });return unsubscribe;
   }, [navigation]);
@@ -53,7 +55,7 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://172.19.0.3:5000/', {
+    let resp = fetch('http://192.168.1.70:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
@@ -64,8 +66,8 @@ export default function MainScreen({ route, navigation }) {
             identifier: identifier,
             old_photo: old_photo,
             name: name,
-            image: ls.get("Image64"),
-            imageUri: ls.get("ImageUri")
+            image: image,
+            imageUri: imageUri
           });
         }
       })
@@ -104,43 +106,38 @@ export default function MainScreen({ route, navigation }) {
   function validPhoto(resp) {
     console.log(resp)
 
-    if (!"Brightness" in Object.keys(resp) || resp["Brightness"] < 100) {     // values
-      setInvalidPhoto("Picture needs to be bright!!")
+    if (!"Brightness" in Object.keys(resp) || resp["Brightness"] < 90) {
+      setInvalidPhoto("Picture needs to be bright!!");
       return false
     }
 
     if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != true) {
-      setInvalidPhoto("Picture needs to be colored!!")
+      setInvalidPhoto("Picture needs to be colored!!");
       return false
     }
 
-    if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0) {     // values
-      setInvalidPhoto("Face needs to have the eyes open!!")
-      return false
-    }
-
-    if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0) {     // values
-      setInvalidPhoto("Face needs to have the eyes open!!")
+    if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0.21) {
+      setInvalidPhoto("Face needs to have the eyes open!!");
       return false
     }
 
     if (!"Face Recognition" in Object.keys(resp) || resp["Face Recognition"] > 0.6) {
-      setInvalidPhoto("Picture needs to be the same person as the old image!!")
+      setInvalidPhoto("Picture needs to be the same person as the old image!!");
       return false
     }
 
     if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != true) {
-      setInvalidPhoto("No face detected!!")
+      setInvalidPhoto("No face detected!!");
       return false
     }
 
-    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] < 50) {     // values
-      setInvalidPhoto("Image Quality needs to be better!!")
+    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 50) {     // values
+      setInvalidPhoto("Image Quality needs to be better!!");
       return false
     }
 
-    if (!"focus" in Object.keys(resp) || resp["focus"] < 30) {     // values
-      setInvalidPhoto("Image shouldn't be blurred!!")
+    if (!"focus" in Object.keys(resp) || resp["focus"] < 80) {
+      setInvalidPhoto("Image shouldn't be blurred!!");
       return false
     }
 
@@ -150,7 +147,7 @@ export default function MainScreen({ route, navigation }) {
 
   return (
     <Background>
-      <View style={{width: '100%'}}>
+      <View style={{width: '100%', marginTop: '-30%'}}>
           <View style={styles.header}></View>
           <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+old_photo}}/>
           <View style={styles.body}>
@@ -158,7 +155,7 @@ export default function MainScreen({ route, navigation }) {
               <Text style={styles.name}>{email}</Text>
               <Text style={styles.info}>{name}</Text>
             </View>
-        </View>
+          </View>
       </View>
     
       <Paragraph>
@@ -176,6 +173,12 @@ export default function MainScreen({ route, navigation }) {
       >
         Gallery
       </Button>
+
+      {invalidPhoto !== null ? 
+      <>
+      <Text style={styles.error}>{invalidPhoto}</Text>
+      </>
+      : null}
       
       {imageUri !== null ? <>
       <Header>New Photo</Header>
@@ -185,18 +188,13 @@ export default function MainScreen({ route, navigation }) {
       <Button
         mode="outlined"
         onPress={validation}
+        style={{marginBottom: 40}}
       >
         Validate Photo
       </Button>
       </> : null}
-
-      {invalidPhoto !== null ? 
-      <>
-      <Text style={styles.error}>{invalidPhoto}</Text>
-      </>
-      : null}
-
     </Background>
+
   )
 }
 
@@ -225,9 +223,9 @@ const styles = StyleSheet.create({
     marginTop:40,
   },
   bodyContent: {
-    flex: 1,
+    flex: 0,
     alignItems: 'center',
-    padding:30,
+    paddingTop:20,
   },
   name:{
     fontSize:28,
@@ -249,5 +247,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: theme.colors.error,
     paddingTop: 8,
+    paddingTop: 30,
+    paddingBottom: 10
   }
 });
