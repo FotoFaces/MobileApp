@@ -34,3 +34,4 @@ npm install local-storage --save
 npm install camera
 expo install expo-camera
 expo install expo-face-detector
+npm install react-native-md5 --save
