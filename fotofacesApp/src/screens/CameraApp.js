@@ -25,7 +25,9 @@ export default function CameraApp({navigation}) {
   const [hasPermission, setHasPermission] = React.useState();
   const [camera, setCamera] = React.useState(null);
   const [faceData, setFaceData] = React.useState([]);
-  const[count,setCount]=React.useState(0);
+  const [count,setCount]=React.useState(0);
+  const [progressFill, setProgressFill]=React.useState(0);
+
 
   React.useEffect(() => {
     (async () => {
@@ -42,21 +44,24 @@ export default function CameraApp({navigation}) {
     if (faceData.length === 0) {
       if(count>0){
         setCount(0)
+        setProgressFill(0)
       }
       return (
-        <View style={styles.faces}>
-          <Text style={styles.faceDesc}>No faces :(</Text>
+        <View style={styles.instructionsContainer}>
+          <Text style={styles.instructions}>Please place your head inside the moldure</Text>
         </View>
       );  
     }
     else{
-      if(count==0){
+      if(count===0){
         if(faceData[0]["leftEyeOpenProbability"] < 0.4 || faceData[0]["rightEyeOpenProbability"] < 0.4){
           setCount(1)
+          setProgressFill(50)
         }else{
           return(
-            <View style={styles.faces}>
-              <Text style={styles.faceDesc}>Please Wink your eyes once</Text>
+            
+            <View style={styles.instructionsContainer}>
+              <Text style={styles.instructions}>Wink one of your eyes</Text>
             </View>
           )
         }
@@ -64,10 +69,11 @@ export default function CameraApp({navigation}) {
       if(count==1){
         if(faceData[0]["smilingProbability"] > 0.7){
           setCount(2)
+          setProgressFill(100)
         }else{
           return(
-            <View style={styles.faces}>
-              <Text style={styles.faceDesc}>Please Smile</Text>
+            <View style={styles.instructionsContainer}>
+              <Text style={styles.instructions}>Smile!!</Text>
             </View>
           )
         }
@@ -140,28 +146,30 @@ export default function CameraApp({navigation}) {
                 size={PREVIEW_SIZE}
                 width={5}
                 backgroundWidth={7}
-                fill={0}
+                fill={progressFill}
                 tintColor="#3485FF"
                 backgroundColor="#e8e8e8"
               />
-            {/* <TouchableOpacity
+        </Camera>
+
+      </MaskedView>
+      <TouchableOpacity
                   style={{
                     alignContent: 'center',
                     position: 'absolute',
-                    bottom: 10
                 }}
                 onPress={() => takePictureNow()}>
                 <PictureIcon />
-            </TouchableOpacity> */}
-        </Camera>
-      </MaskedView>
+        </TouchableOpacity>
       {box()}
+     
     </SafeAreaView>
 
   );
 
   
 }
+
 
 const styles = StyleSheet.create({
   faces: {
