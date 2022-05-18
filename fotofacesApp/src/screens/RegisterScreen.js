@@ -14,6 +14,7 @@ import { nameValidator } from '../helpers/nameValidator'
 import Paragraph from '../components/Paragraph'
 import md5 from "react-native-md5";
 import * as ImagePicker from 'expo-image-picker';
+import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function RegisterScreen({ navigation }) {
@@ -24,6 +25,7 @@ export default function RegisterScreen({ navigation }) {
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
   const [imageError, setimageError] = useState(null);
+  const [show, setShow] = useState(null);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -42,10 +44,14 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const onSignUpPressed = () => {
+
+    setShow("TRUE")
+
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError || nameError) {
+      setShow(null)
       setName({ ...name, error: nameError })
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
@@ -53,6 +59,7 @@ export default function RegisterScreen({ navigation }) {
     }
 
     if (image == null) {
+      setShow(null)
       setimageError("Registration needs Photo")
       return
     }
@@ -70,8 +77,10 @@ export default function RegisterScreen({ navigation }) {
     }).then((data)=>{
       data.json().then((json) => {
         if (json["state"] == "success") {
+          setShow(null)
           navigation.navigate("StartScreen")
         } else {
+          setShow(null)
           setimageError("Error creating user, did you use correct data ?")
         }
       })
@@ -81,12 +90,16 @@ export default function RegisterScreen({ navigation }) {
   return (
     <Background>
       <View style={{marginTop: '-30%'}}></View>
+
       <BackButton goBack={navigation.goBack}/>
       <View>
         {image !== null ? <><Image style={styles.avatar} source={{uri: imageUri}}/></> : <><Image style={styles.avatar} source={require('../assets/logo.png')}/></>}
       </View>
       <View style={{width: '100%', marginTop: 200}}>
       <Paragraph>Create Account</Paragraph>
+
+      {show !== null ? <SimpleLottie /> :null }
+
       <TextInput
         label="Name"
         returnKeyType="next"

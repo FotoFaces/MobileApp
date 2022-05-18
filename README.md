@@ -19,19 +19,22 @@ npm start
 
 
 ## ArchLinux
-pacman -Syu nodejs-lts-gallium  
-npm install expo-cli --global  
-npm start  
+pacman -Syu nodejs-lts-gallium
+npm start
 
 ## Needed
-npm install expo-image-picker  
-npm install form-data-encoder  
-npm install formdata-node  
-npm install react-native-md5 --save  
+sudo npm install expo-cli --global
+sudo npm install expo-image-picker
+sudo npm install form-data-encoder
+sudo npm install formdata-node
+sudo npm install react-native-md5 --save
+sudo npm install @react-native-async-storage/async-storage
+sudo npm install local-storage --save
+sudo npm install camera
+sudo npm install lottie-react-native
+sudo expo install expo-camera
+sudo expo install expo-face-detector
+sudo npm install eas-cli
 
-npm install @react-native-async-storage/async-storage  
-npm install local-storage --save  
-npm install camera  
-expo install expo-camera  
-expo install expo-face-detector  
-npm install react-native-md5 --save  
+## Build local apk
+eas build --profile production --platform android --local

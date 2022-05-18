@@ -11,16 +11,21 @@ import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import md5 from "react-native-md5";
+import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const [show, setShow] = useState(null)
 
   const onLoginPressed = () => {
+    setShow("TRUE")
+
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError) {
+      setShow(null)
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
@@ -34,6 +39,7 @@ export default function LoginScreen({ navigation }) {
         let hex_md5v = md5.hex_md5( password.value );
 
         if (hex_md5v === logins["password"]) {
+          setShow(null)
           navigation.navigate('MainScreen', 
           {
             email: email.value,
@@ -44,6 +50,7 @@ export default function LoginScreen({ navigation }) {
           );
         }
         else {
+          setShow(null)
           setEmail({ ...email, error: " " })
           setPassword({ ...password, error: "Email or password incorrect" })
         }
@@ -111,6 +118,9 @@ export default function LoginScreen({ navigation }) {
       <BackButton goBack={navigation.goBack} />
       <Logo />
       <Header>Welcome back</Header>
+
+      {show !== null ? <SimpleLottie /> :null }
+
       <TextInput
         label="Email"
         returnKeyType="next"

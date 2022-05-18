@@ -6,13 +6,16 @@ import Button from '../components/Button'
 import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 import { Text, View, StyleSheet, Image } from 'react-native';
+import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function PhotoAccept({ route, navigation }) {
 
   const { email, identifier, old_photo, name, image, imageUri } = route.params;
+  const [show, setShow] = useState(null);
 
   const acceptPhoto = () => {
+    setShow("TRUE")
     // update photo
     let formData = new FormData();
     formData.append("param", image);
@@ -21,6 +24,7 @@ export default function PhotoAccept({ route, navigation }) {
       method: 'PUT',
       body: formData
     }).then((data)=>{
+      setShow(null)
       navigation.navigate('StartScreen')
       })
   }
@@ -31,6 +35,9 @@ export default function PhotoAccept({ route, navigation }) {
       <Text 
         style={styles.headline}> ✅ Valid Photo !! 
       </Text>
+
+      {show !== null ? <SimpleLottie /> :null }
+
         <View style={styles.container}>
           <View>
             <Paragraph>Old Photo</Paragraph>

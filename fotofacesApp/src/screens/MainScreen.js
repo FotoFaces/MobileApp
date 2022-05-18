@@ -10,6 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../core/theme'
 import {useRoute} from '@react-navigation/native';
 import ls from 'local-storage'
+import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function MainScreen({ route, navigation }) {
@@ -19,6 +20,7 @@ export default function MainScreen({ route, navigation }) {
   const [imageUri, setImageUri] = useState(null);
   const [invalidPhoto, setInvalidPhoto] = useState(null);
   const { email, identifier, old_photo, name } = route.params;
+  const [show, setShow] = useState(null);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -51,6 +53,7 @@ export default function MainScreen({ route, navigation }) {
   };
 
   const validation = () => {
+    setShow("TRUE")
     let formData = new FormData();
     formData.append("id", identifier);
     formData.append("candidate", image);
@@ -61,6 +64,7 @@ export default function MainScreen({ route, navigation }) {
     }).then((data)=>{
       data.json().then((properties) => {
         if(validPhoto(properties)) {
+          setShow(null)
           navigation.navigate('PhotoAccept', { 
             email: email.value,
             identifier: identifier,
@@ -69,6 +73,8 @@ export default function MainScreen({ route, navigation }) {
             image: image,
             imageUri: imageUri
           });
+        } else {
+          setShow(null)
         }
       })
     })
@@ -160,6 +166,9 @@ export default function MainScreen({ route, navigation }) {
     
       <Paragraph>
       </Paragraph>
+
+      {show !== null ? <SimpleLottie /> :null }
+
       <Button
         mode="contained"
         //onPress={openCamera}
