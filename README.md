@@ -3,7 +3,6 @@ Mobile App for the FotoFaces Project
 
 How to execute:
 1º Install node:
-
 sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
