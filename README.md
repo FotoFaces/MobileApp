@@ -2,11 +2,9 @@
 Mobile App for the FotoFaces Project
 
 How to execute:
-1º Install node:
-sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
-
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-
+1º Install node:  
+sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates  
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -  
 sudo apt -y install nodejs
 
 2º Install expo-cli with npm:
@@ -21,19 +19,19 @@ npm start
 
 
 ## ArchLinux
-pacman -Syu nodejs-lts-gallium
-npm install expo-cli --global
-npm start
+pacman -Syu nodejs-lts-gallium  
+npm install expo-cli --global  
+npm start  
 
 ## Needed
-npm install expo-image-picker
-npm install form-data-encoder
-npm install formdata-node
-npm install react-native-md5 --save
+npm install expo-image-picker  
+npm install form-data-encoder  
+npm install formdata-node  
+npm install react-native-md5 --save  
 
-npm install @react-native-async-storage/async-storage
-npm install local-storage --save
-npm install camera
-expo install expo-camera
-expo install expo-face-detector
-npm install react-native-md5 --save
+npm install @react-native-async-storage/async-storage  
+npm install local-storage --save  
+npm install camera  
+expo install expo-camera  
+expo install expo-face-detector  
+npm install react-native-md5 --save  
