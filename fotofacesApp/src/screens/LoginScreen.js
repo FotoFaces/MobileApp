@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-    let resp = fetch('http://20.76.47.56:8393/user/'+email.value, {
+    let resp = fetch('http://192.168.1.70:8393/user/'+email.value, {
       method: 'GET',
     }).then((data)=>{
       data.json().then((logins) => {
@@ -38,7 +38,8 @@ export default function LoginScreen({ navigation }) {
           {
             email: email.value,
             identifier: logins["id"],
-            old_photo: logins["photo"]
+            old_photo: logins["photo"],
+            name: logins["name"]
           }
           );
         }
@@ -67,7 +68,7 @@ export default function LoginScreen({ navigation }) {
 
     // should wait for response    
 
-    let searchParams = new URL(document.location).searchParams;
+    let searchParams = new URL(location).searchParams;
 
     if (searchParams.has("code")) {
 
