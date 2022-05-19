@@ -58,7 +58,7 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://192.168.1.70:5000/', {
+    let resp = fetch('https://192.168.1.70:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{

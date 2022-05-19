@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import React, { useState, useCallback } from 'react'
+import { TouchableOpacity, StyleSheet, View, Linking } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
@@ -18,7 +18,7 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
   const [show, setShow] = useState(null)
-
+  
   const onLoginPressed = () => {
     setShow("TRUE")
 
@@ -31,7 +31,7 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-    let resp = fetch('http://192.168.1.70:8393/user/'+email.value, {
+    let resp = fetch('https://192.168.1.70:8393/user/'+email.value, {
       method: 'GET',
     }).then((data)=>{
       data.json().then((logins) => {
@@ -57,60 +57,70 @@ export default function LoginScreen({ navigation }) {
       })
     })
 
+    setShow(null)
     return 
   }
 
-  const onLoginSSO = () => {
-    const acceptedAccessTokenInfo = ["access_token", "token_type", "expires_in", "id_token"];
+  const onLoginSSO = useCallback(async () => {
+      const acceptedAccessTokenInfo = ["access_token", "token_type", "expires_in", "id_token"];
 
-    // WSO2 APPLICATION, CALLs AND ENDPOINT DETAILS
-    const authorizeEndpoint = "https://wso2-gw.ua.pt/authorize";
-    const tokenEndpoint = "https://wso2-gw.ua.pt/token";
-    const redirectURI = "http://localhost";
-    const consumerKey = "agh44RajMJcYvCIq3lSMrutfPJ0a"
-    // Base64 encoded string: <Consumer Key>:<Consumer Secret>
-    const authorizationBase64Credentials = "YWdoNDRSYWpNSmNZdkNJcTNsU01ydXRmUEowYTpKWVNZNU1iYkJQR0Y4WURYZmdoeUdKRnVmNFVh";
+      // WSO2 APPLICATION, CALLs AND ENDPOINT DETAILS
+      const authorizeEndpoint = "https://wso2-gw.ua.pt/authorize";
+      const tokenEndpoint = "https://wso2-gw.ua.pt/token";
+      const redirectURI = "http://localhost";
+      const consumerKey = "agh44RajMJcYvCIq3lSMrutfPJ0a"
+      // agh44RajMJcYvCIq3lSMrutfPJ0a:JYSY5MbbBPGF8YDXfghyGJFuf4Ua
 
-    location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
+      // Base64 encoded string: <Consumer Key>:<Consumer Secret>
+      const authorizationBase64Credentials = "YWdoNDRSYWpNSmNZdkNJcTNsU01ydXRmUEowYTpKWVNZNU1iYkJQR0Y4WURYZmdoeUdKRnVmNFVh";
+      
+      let location = authorizeEndpoint+'?response_type=code&state=1234567890&scope=openid&client_id='+consumerKey+'&redirect_uri='+redirectURI
 
-    // should wait for response    
+      // Checking if the link is supported for links with custom URL scheme.
+      const supported = await Linking.canOpenURL(location);
+  
+      if (supported) {
+        await Linking.openURL(location);
 
-    let searchParams = new URL(location).searchParams;
+        let searchParams = Linking.getSearchParams(location);
 
-    if (searchParams.has("code")) {
+        if (searchParams.contains("code")) {
 
-      let code = searchParams.get("code");
-
-      alert(code)
-
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/x-www-form-urlencoded")
-      myHeaders.append("Authorization", `Basic ${authorizationBase64Credentials}`);
-
-      fetch(`${tokenEndpoint}?code=${code}&redirect_uri=${redirectURI}&grant_type=authorization_code`, {
-          method: "POST",
-          headers: myHeaders
-      }).then(response => response.json())
-        .then(res => {
-            Object.keys(res).forEach((item, index) => {
-                if (acceptedAccessTokenInfo.includes(item)) {
-                  navigation.navigate('MainScreen', 
-                  {
-                    email: email.value,
-                    identifier: logins["id"],
-                    old_photo: logins["photo"]
-                  }
-                  );
-                }
+          let code = searchParams.get("code");
+    
+          alert(code)
+    
+          const myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/x-www-form-urlencoded")
+          myHeaders.append("Authorization", `Basic ${authorizationBase64Credentials}`);
+    
+          fetch(`${tokenEndpoint}?code=${code}&redirect_uri=${redirectURI}&grant_type=authorization_code`, {
+              method: "POST",
+              headers: myHeaders
+          }).then(response => response.json())
+            .then(res => {
+                Object.keys(res).forEach((item, index) => {
+                    if (acceptedAccessTokenInfo.includes(item)) {
+                      navigation.navigate('MainScreen', 
+                      {
+                        email: email.value,
+                        identifier: logins["id"],
+                        old_photo: logins["photo"]
+                      }
+                      );
+                    }
+                });
+            })
+            .catch(err => {
+                console.log(`Received an error: ${err}`);
             });
-        })
-        .catch(err => {
-            console.log(`Received an error: ${err}`);
-        });
-    }
+        }
+      } else {
+        Alert.alert(`Don't know how to open this URL: ${location}`);
+      }
 
     return
-  }
+   });
 
 
   return (
