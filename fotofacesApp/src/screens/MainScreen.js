@@ -57,11 +57,12 @@ export default function MainScreen({ route, navigation }) {
     let formData = new FormData();
     formData.append("id", identifier);
     formData.append("candidate", image);
-
-    let resp = fetch('http://192.168.1.70:5000/', {
+    console.log(formData);
+    let resp = fetch('http://192.168.1.69:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
+      //console.log(data)
       data.json().then((properties) => {
         if(validPhoto(properties)) {
           setShow(null)
