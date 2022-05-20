@@ -104,8 +104,9 @@ export default function CameraApp({navigation}) {
     }
     else{
       if(camera && count==2){
-        const data = await camera.takePictureAsync(null)
+        const data = await camera.takePictureAsync({quality : 1, base64: true})
         ls.set('ImageUri',data.uri)
+        ls.set('Image',data.base64)
         navigation.navigate('MainScreen')
 
       }

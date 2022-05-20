@@ -22,7 +22,8 @@ export default function MainScreen({ route, navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const preview = ls.get('ImageUri')
-      const preview64 = ls.get("Image64")
+      const preview64 = ls.get("Image")
+      console.log(preview64)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
