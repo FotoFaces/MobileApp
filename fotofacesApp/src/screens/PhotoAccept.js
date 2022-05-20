@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
@@ -39,30 +39,29 @@ export default function PhotoAccept({ route, navigation }) {
       {show !== null ? <SimpleLottie /> :null }
 
         <View style={styles.container}>
-          <View>
+          <View style={{flex:2, marginRight: 30}}>
             <Paragraph>Old Photo</Paragraph>
             <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+old_photo}}/>
           </View>
-          <View style={{marginLeft: 206, marginTop: -20}}>
+          <View style={{flex:2, marginLeft: 30}}>
             <Paragraph>New Photo</Paragraph>
             <Image style={styles.avatar} source={{uri: imageUri}} />
           </View>
         </View>
-        <View style={{marginTop: 186}}>
+
+        <View style={{marginTop: 146}}>
           <View style={styles.container}>
             <Paragraph>
               Are you sure you want to submit this photo?
             </Paragraph>
-          </View>
-          <View style={styles.container}>
-            <View style={styles.button_1}>
+            <View style={styles.button}>
               <Button
                 mode="outlined"
                 onPress={acceptPhoto}>
                   Yes
               </Button>
             </View>
-            <View style={styles.button_2}>
+            <View style={styles.button}>
               <Button
                 mode="outlined"
                 onPress={() => {
@@ -96,17 +95,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap:"wrap",
     alignContent:"space-between",
+    alignItems:'center',
+    justifyContent:'center',
     textAlign:"center",
     margin:5,
     padding:2,
-    marginTop: 20
+    marginTop: 30
   },
-  button_2: {
-    flex:2 ,
-    margin:5,
-  },
-  button_1: {
-    flex:2 ,
+  button: {
+    flex:3,
     margin:5,
   },
   headline: {

@@ -20,6 +20,7 @@ export default function Button({ mode, style, ...props }) {
 
 const styles = StyleSheet.create({
   button: {
+    zIndex: 1,
     width: '100%',
     marginVertical: 10,
     paddingVertical: 2,

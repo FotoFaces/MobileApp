@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Image, View, Platform, StyleSheet, Text, ScrollView } from 'react-native'
 import Background from '../components/Background'
-import Logo from '../components/Logo'
 import Header from '../components/Header'
 import Button from '../components/Button'
 import Paragraph from '../components/Paragraph'
-import DisplayAnImage from '../components/Image'
 import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../core/theme'
-import {useRoute} from '@react-navigation/native';
 import ls from 'local-storage'
 import SimpleLottie from '../components/SimpleLottie'
 
@@ -58,6 +55,8 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
+    console.log("sending")
+
     let resp = fetch('http://192.168.1.70:5000/', {
       method: 'POST',
       body: formData
@@ -77,6 +76,9 @@ export default function MainScreen({ route, navigation }) {
           setShow(null)
         }
       })
+    }).catch(function(error) {
+      setShow(null)
+      reject(new Error(`Unable to retrieve events.\n${error.message}`));
     })
   }
 
@@ -153,7 +155,7 @@ export default function MainScreen({ route, navigation }) {
 
   return (
     <Background>
-      <View style={{width: '100%', marginTop: '-30%'}}>
+      <View style={{width: '100%', marginTop: '-30%', marginBottom: 40}}>
           <View style={styles.header}></View>
           <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+old_photo}}/>
           <View style={styles.body}>
@@ -163,19 +165,17 @@ export default function MainScreen({ route, navigation }) {
             </View>
           </View>
       </View>
-    
-      <Paragraph>
-      </Paragraph>
 
       {show !== null ? <SimpleLottie /> :null }
 
       <Button
-        mode="contained"
+        mode="outlined"
         //onPress={openCamera}
         onPress={() => navigation.navigate('CameraApp') }
       >
         Take a Photo
       </Button>
+
       <Button
         mode="outlined"
         onPress={pickImage}
@@ -188,20 +188,23 @@ export default function MainScreen({ route, navigation }) {
       <Text style={styles.error}>{invalidPhoto}</Text>
       </>
       : null}
-      
+            
       {imageUri !== null ? <>
       <Header>New Photo</Header>
-      <Image style={{width: 180, height: 180}} source={{
+
+      <Image style={{width: 180, height: 180, marginTop: -20, marginBottom: 8}} source={{
           uri: imageUri
         }}/>
+      
       <Button
-        mode="outlined"
+        mode="contained"
         onPress={validation}
         style={{marginBottom: 40}}
       >
         Validate Photo
       </Button>
       </> : null}
+
     </Background>
 
   )
@@ -211,6 +214,7 @@ const styles = StyleSheet.create({
   header:{
     backgroundColor: theme.colors.primary,
     height:200,
+    width: '100%'
   },
   avatar: {
     width: 130,
@@ -223,11 +227,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop:130
   },
-  name:{
-    fontSize:22,
-    color:"#FFFFFF",
-    fontWeight:'600',
-  },
   body:{
     marginTop:40,
   },
@@ -238,12 +237,12 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:28,
-    color: "#696969",
+    color: '#ffffff',
     fontWeight: "600"
   },
   info:{
     fontSize:16,
-    color: theme.colors.primary,
+    color: '#ffffff',
     marginTop:10
   },
   description:{
