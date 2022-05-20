@@ -11,7 +11,6 @@ import { AnimatedCircularProgress } from "react-native-circular-progress"
 
 
 const { width: windowWidth } = Dimensions.get("window")
-
 const PREVIEW_SIZE = 325
 const PREVIEW_RECT = {
   minX: (windowWidth - PREVIEW_SIZE) / 2,
@@ -59,7 +58,6 @@ export default function CameraApp({navigation}) {
           setProgressFill(50)
         }else{
           return(
-
             <View style={styles.instructionsContainer}>
               <Text style={styles.instructions}>Wink one of your eyes</Text>
             </View>
@@ -164,7 +162,6 @@ export default function CameraApp({navigation}) {
                 <PictureIcon />
         </TouchableOpacity>
       {box()}
-
     </SafeAreaView>
 
   );
