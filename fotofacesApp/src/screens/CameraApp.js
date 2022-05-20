@@ -11,7 +11,6 @@ import { AnimatedCircularProgress } from "react-native-circular-progress"
 
 
 const { width: windowWidth } = Dimensions.get("window")
- 
 const PREVIEW_SIZE = 325
 const PREVIEW_RECT = {
   minX: (windowWidth - PREVIEW_SIZE) / 2,
@@ -39,7 +38,7 @@ export default function CameraApp({navigation}) {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-  
+
   function box() {
     if (faceData.length === 0) {
       if(count>0){
@@ -50,7 +49,7 @@ export default function CameraApp({navigation}) {
         <View style={styles.instructionsContainer}>
           <Text style={styles.instructions}>Please place your head inside the moldure</Text>
         </View>
-      );  
+      );
     }
     else{
       if(count===0){
@@ -59,7 +58,6 @@ export default function CameraApp({navigation}) {
           setProgressFill(50)
         }else{
           return(
-            
             <View style={styles.instructionsContainer}>
               <Text style={styles.instructions}>Wink one of your eyes</Text>
             </View>
@@ -106,8 +104,9 @@ export default function CameraApp({navigation}) {
     }
     else{
       if(camera && count==2){
-        const data = await camera.takePictureAsync(null)
+        const data = await camera.takePictureAsync({quality : 1, base64: true})
         ls.set('ImageUri',data.uri)
+        ls.set('Image',data.base64)
         navigation.navigate('MainScreen')
 
       }
@@ -120,7 +119,7 @@ export default function CameraApp({navigation}) {
   const handleFacesDetected = ({ faces }) => {
     setFaceData(faces);
   }
-  
+
 
   return (
     <SafeAreaView style={StyleSheet.absoluteFill}>
@@ -128,7 +127,7 @@ export default function CameraApp({navigation}) {
         style={StyleSheet.absoluteFill}
         maskElement={<View style={styles.mask} />}
       >
-        <Camera 
+        <Camera
           type={Camera.Constants.Type.front}
           style={{width:windowWidth,
             }}
@@ -157,17 +156,18 @@ export default function CameraApp({navigation}) {
                   style={{
                     alignContent: 'center',
                     position: 'absolute',
+                    alignSelf: 'center',
+                    bottom: 10
                 }}
                 onPress={() => takePictureNow()}>
                 <PictureIcon />
         </TouchableOpacity>
       {box()}
-     
     </SafeAreaView>
 
   );
 
-  
+
 }
 
 
