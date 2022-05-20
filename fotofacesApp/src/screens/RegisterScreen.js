@@ -93,9 +93,9 @@ export default function RegisterScreen({ navigation }) {
 
       <BackButton goBack={navigation.goBack}/>
       <View>
-        {image !== null ? <><Image style={styles.avatar} source={{uri: imageUri}}/></> : <><Image style={styles.avatar} source={require('../assets/logo.png')}/></>}
+        {image !== null ? <><Image style={styles.avatar} source={{uri: imageUri}}/></> : <><Image style={styles.avatar} source={require('../assets/avatar.jpg')}/></>}
       </View>
-      <View style={{width: '100%', marginTop: 200}}>
+      <View style={{width: '100%', marginTop: 200, paddingTop: 20, marginBottom: 30}}>
       <Paragraph>Create Account</Paragraph>
 
       {show !== null ? <SimpleLottie /> :null }
@@ -151,7 +151,7 @@ export default function RegisterScreen({ navigation }) {
         Sign Up
       </Button>
       <View style={styles.row}>
-        <Text>Already have an account? </Text>
+        <Text style={{color: '#ffffff'}}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
           <Text style={styles.link}>Login</Text>
         </TouchableOpacity>
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   link: {
     fontWeight: 'bold',
-    color: theme.colors.primary,
+    color: '#9be4ff',
   },
   avatar: {
     width: 170,

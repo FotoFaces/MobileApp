@@ -151,12 +151,12 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <Button mode="contained" onPress={onLoginSSO}>
-        SSO Login
-      </Button>
-
       <Button mode="contained" onPress={onLoginPressed}>
         Login
+      </Button>
+
+      <Button mode="contained" onPress={onLoginSSO}>
+        SSO Login
       </Button>
 
       <View style={styles.row}>
