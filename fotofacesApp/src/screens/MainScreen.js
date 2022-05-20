@@ -212,20 +212,19 @@ export default function MainScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   header:{
-    backgroundColor: theme.colors.primary,
-    height:200,
+    height: 230,
     width: '100%'
   },
   avatar: {
-    width: 130,
-    height: 130,
-    borderRadius: 63,
+    width: 200,
+    height: 200,
+    borderRadius: 90,
     borderWidth: 4,
     borderColor: "white",
     marginBottom:10,
     alignSelf:'center',
     position: 'absolute',
-    marginTop:130
+    marginTop:70
   },
   body:{
     marginTop:40,
