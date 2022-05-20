@@ -192,14 +192,15 @@ export default function MainScreen({ route, navigation }) {
       {imageUri !== null ? <>
       <Header>New Photo</Header>
 
-      <Image style={{width: 180, height: 180, marginTop: -20, marginBottom: 8}} source={{
+      <Image style={{width: 200, height: 200, marginTop: -20, marginBottom: 8, borderRadius: 10, borderColor: "white", borderWidth: 4}} source={{
           uri: imageUri
         }}/>
       
       <Button
-        mode="contained"
+        mode="outlined"
+        color={'white'}
+        style={{marginBottom: 40, backgroundColor: theme.colors.primary}}
         onPress={validation}
-        style={{marginBottom: 40}}
       >
         Validate Photo
       </Button>

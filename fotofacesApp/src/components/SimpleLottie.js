@@ -7,32 +7,24 @@ import { isAbsolute } from "path-browserify";
 export default function SimpleLottie() {
     return (
       <View>
-        {/* <View style={styles.backgroundOp}></View> */}
-          <LottieView
-            source={require("../assets/99833-edupia-loading.json")}
-            style={styles.animation}
-            autoPlay
-          />
+        <LottieView
+          source={require("../assets/99833-edupia-loading.json")}
+          style={styles.animation}
+          autoPlay
+        />
       </View>
     );
   }
   const styles = StyleSheet.create({
     animation: {
-      zIndex: 100,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'absolute',
-      top: -50,
-      width: 300,
-      height: 300,
-    },
-    backgroundOp: {
-      backgroundColor: '#ffffff',
-      zIndex: 50,
-      width: '100%',
-      height: '100%',
-      justifyContent:"center",
-      alignItems:"center"
+      top: -440,
+      width: 500,
+      height: 1500,
+      backgroundColor: '#0000005a',
+      zIndex: 10
     }
   });

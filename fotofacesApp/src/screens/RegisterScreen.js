@@ -130,8 +130,9 @@ export default function RegisterScreen({ navigation }) {
         secureTextEntry
       />
        <Button
-        mode="contained"
-        //onPress={openCamera}
+        mode="outlined"
+        color={'white'}
+        style={{backgroundColor: theme.colors.primary}}
         onPress={() => navigation.navigate('CameraApp') }
       >
         Take a Photo
@@ -144,9 +145,10 @@ export default function RegisterScreen({ navigation }) {
       </Button>
       {imageError !== null ? <Text style={styles.error}>{imageError}</Text> : null}
       <Button
-        mode="contained"
+        mode="outlined"
+        color={'white'}
+        style={{marginTop: 24, backgroundColor: theme.colors.primary}}
         onPress={onSignUpPressed}
-        style={{ marginTop: 24 }}
       >
         Sign Up
       </Button>
