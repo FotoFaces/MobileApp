@@ -70,8 +70,8 @@ export default function RegisterScreen({ navigation }) {
     formData.append("name", name.value);
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
-    
-    let resp = fetch('http://192.168.1.70:8393/user/2', {
+
+    let resp = fetch('http://192.168.1.162:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
