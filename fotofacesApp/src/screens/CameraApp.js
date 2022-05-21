@@ -7,6 +7,8 @@ import PictureIcon from '../components/TakePictureIcon'
 import ls from 'local-storage'
 import MaskedView from "@react-native-community/masked-view"
 import { AnimatedCircularProgress } from "react-native-circular-progress"
+import { useIsFocused } from "@react-navigation/native";
+import { AppState } from "react-native"; 
 
 
 
@@ -35,20 +37,19 @@ export default function CameraApp({navigation}) {
       setHasPermission(status === "granted");
     })();
   }, []);
-
-  if (hasPermission === false) {
+    if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
   
   function box() {
-    if (faceData.length === 0) {
+    if (faceData.length !== 1) {
       if(count>0){
         setCount(0)
         setProgressFill(0)
       }
       return (
         <View style={styles.instructionsContainer}>
-          <Text style={styles.instructions}>Please place your head inside the moldure</Text>
+          <Text style={styles.instructions}>Please place your head inside the moldure, one face at a time</Text>
         </View>
       );  
     }
@@ -56,21 +57,65 @@ export default function CameraApp({navigation}) {
       if(count===0){
         if(faceData[0]["leftEyeOpenProbability"] < 0.4 || faceData[0]["rightEyeOpenProbability"] < 0.4){
           setCount(1)
-          setProgressFill(50)
+          setProgressFill(33)
         }else{
+          if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>800){
+            return(
+              <View style={styles.instructionsContainer}>
+                <Text style={styles.instructions}>You're too close!! Please step back from the camera</Text>
+              </View>
+            )
+          }
           return(
-            
             <View style={styles.instructionsContainer}>
               <Text style={styles.instructions}>Wink one of your eyes</Text>
             </View>
           )
         }
       }
-      if(count==1){
-        if(faceData[0]["smilingProbability"] > 0.7){
+      if(count===1){
+        if(faceData[0]["yawAngle"] < 50 && faceData[0]["yawAngle"] > 35){
           setCount(2)
+          setProgressFill(66)
+        }else{
+          if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>800){
+            return(
+              <View style={styles.instructionsContainer}>
+                <Text style={styles.instructions}>You're too close!! Please step back from the camera</Text>
+              </View>
+            )
+          }
+          return(
+            <View style={styles.instructionsContainer}>
+              <Text style={styles.instructions}>Turn head right </Text>
+            </View>
+          )
+        }
+      }
+      // if(count===2){
+      //   if(faceData[0]["rollAngle"] > 5){
+      //     setCount(3)
+      //     setProgressFill(75)        
+      //   }else{
+      //     return(
+      //       <View style={styles.instructionsContainer}>
+      //         <Text style={styles.instructions}>Look up</Text>
+      //       </View>
+      //     )
+      //   }
+      // }
+      if(count===2){
+        if(faceData[0]["smilingProbability"] > 0.7){
+          setCount(3)
           setProgressFill(100)
         }else{
+          if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>800){
+            return(
+              <View style={styles.instructionsContainer}>
+                <Text style={styles.instructions}>You're too close!! Please step back from the camera</Text>
+              </View>
+            )
+          }
           return(
             <View style={styles.instructionsContainer}>
               <Text style={styles.instructions}>Smile!!</Text>
@@ -78,17 +123,6 @@ export default function CameraApp({navigation}) {
           )
         }
       }
-      // if(counter==3){
-      //   if(faceData.rightEyeOpenProbability<0.4 || faceData.leftEyeOpenProbability < 0.4){
-      //     counter+=1
-      //   }else{
-      //     return(
-      //       <View style={styles.faces}>
-      //         <Text style={styles.faceDesc}>Please Wink your eyes once</Text>
-      //       </View>
-      //     )
-      //   }
-      // }
     }
     // else{
     //   if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>900){
@@ -105,7 +139,7 @@ export default function CameraApp({navigation}) {
       return (alert("No face found!!"));
     }
     else{
-      if(camera && count==2){
+      if(camera && count==3){
         const data = await camera.takePictureAsync(null)
         ls.set('ImageUri',data.uri)
         navigation.navigate('MainScreen')
@@ -123,6 +157,7 @@ export default function CameraApp({navigation}) {
   
 
   return (
+    <>
     <SafeAreaView style={StyleSheet.absoluteFill}>
       <MaskedView
         style={StyleSheet.absoluteFill}
@@ -138,7 +173,7 @@ export default function CameraApp({navigation}) {
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
-            minDetectionInterval: 100,
+            minDetectionInterval: 500,
             tracking: true
           }}>
             <AnimatedCircularProgress
@@ -157,6 +192,8 @@ export default function CameraApp({navigation}) {
                   style={{
                     alignContent: 'center',
                     position: 'absolute',
+                    alignSelf: 'center',
+                    bottom:10
                 }}
                 onPress={() => takePictureNow()}>
                 <PictureIcon />
@@ -164,7 +201,7 @@ export default function CameraApp({navigation}) {
       {box()}
      
     </SafeAreaView>
-
+  </>
   );
 
   
