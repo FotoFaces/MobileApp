@@ -55,9 +55,11 @@ export default function MainScreen({ route, navigation }) {
   const validation = () => {
     setShow("TRUE")
     let formData = new FormData();
+
     formData.append("id", identifier);
     formData.append("candidate", image);
-    console.log(formData);
+    console.log(image);
+    //console.log(formData);
     let resp = fetch('http://192.168.1.69:5000/', {
       method: 'POST',
       body: formData
@@ -79,6 +81,7 @@ export default function MainScreen({ route, navigation }) {
         }
       })
     })
+    console.log(resp)
   }
 
 // Brightness: 141.30041354355131
