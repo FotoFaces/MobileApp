@@ -45,11 +45,10 @@ export default function PhotoAccept({ route, navigation }) {
           </View>
           <View style={{marginLeft: 206, marginTop: -20}}>
             <Paragraph>New Photo</Paragraph>
-            <Image style={styles.avatar} source={{uri: imageUri}} />
+            <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+image}}/>
           </View>
         </View>
         <View style={{marginTop: 186}}>
-            <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+image}}/>
           <View style={styles.container}>
             <Paragraph>
               Are you sure you want to submit this photo?
