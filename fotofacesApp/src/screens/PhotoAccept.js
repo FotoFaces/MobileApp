@@ -12,7 +12,7 @@ import SimpleLottie from '../components/SimpleLottie'
 export default function PhotoAccept({ route, navigation }) {
 
   const { email, identifier, old_photo, name, image, imageUri } = route.params;
-  const [show, setShow] = useState(null);
+  const [show, setShow] = React.useState(null);
 
   const acceptPhoto = () => {
     setShow("TRUE")
@@ -20,7 +20,7 @@ export default function PhotoAccept({ route, navigation }) {
     let formData = new FormData();
     formData.append("param", image);
 
-    fetch('http://192.168.1.70:8393/image/'+identifier, {
+    fetch('http://192.168.1.162:8393/image/'+identifier, {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -32,8 +32,8 @@ export default function PhotoAccept({ route, navigation }) {
   return (
     <Background>
       <Header>Update Photo</Header>
-      <Text 
-        style={styles.headline}> ✅ Valid Photo !! 
+      <Text
+        style={styles.headline}> ✅ Valid Photo !!
       </Text>
 
       {show !== null ? <SimpleLottie /> :null }
@@ -49,6 +49,7 @@ export default function PhotoAccept({ route, navigation }) {
           </View>
         </View>
         <View style={{marginTop: 186}}>
+            <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+image}}/>
           <View style={styles.container}>
             <Paragraph>
               Are you sure you want to submit this photo?

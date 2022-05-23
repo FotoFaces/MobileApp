@@ -62,13 +62,14 @@ export default function MainScreen({ route, navigation }) {
     }).then((data)=>{
       data.json().then((properties) => {
         if(validPhoto(properties)) {
+
           setShow(null)
           navigation.navigate('PhotoAccept', {
             email: email.value,
             identifier: identifier,
             old_photo: old_photo,
             name: name,
-            image: image,
+            image: properties["cropped"],
             imageUri: imageUri
           });
         } else {
@@ -118,10 +119,13 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != true) {
-      setInvalidPhoto("Picture needs to be colored!!");
-      return false
-    }
+
+    console.log(resp["Colored Picture"])
+    console.log("Colored Picture")
+    //if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != 'True') {
+    //  setInvalidPhoto("Picture needs to be colored!!");
+    //  return false
+    //}
 
     if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0.21) {
       setInvalidPhoto("Face needs to have the eyes open!!");
@@ -133,10 +137,10 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != true) {
-      setInvalidPhoto("No face detected!!");
-      return false
-    }
+    //if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != true) {
+    //  setInvalidPhoto("No face detected!!");
+    //  return false
+    //}
 
     if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 50) {     // values
       setInvalidPhoto("Image Quality needs to be better!!");
