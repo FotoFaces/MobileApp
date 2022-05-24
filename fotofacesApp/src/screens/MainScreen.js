@@ -63,14 +63,15 @@ export default function MainScreen({ route, navigation }) {
     }).then((data)=>{
       //console.log(data)
       data.json().then((properties) => {
-        if(validPhoto(properties)) {
+        if(validPhoto(properties["feedback"])) {
+
           setShow(null)
           navigation.navigate('PhotoAccept', {
             email: email.value,
             identifier: identifier,
             old_photo: old_photo,
             name: name,
-            image: image,
+            image: properties["cropped"],
             imageUri: imageUri
           });
         } else {
@@ -84,44 +85,17 @@ export default function MainScreen({ route, navigation }) {
     console.log(resp)
   }
 
-// Brightness: 141.30041354355131
-// ​
-// "Colored Picture": true
-// ​
-// "Crop Position": Array(4) [ 43, 24, 228, … ]     ->
-// ​
-// Cropping: true                                   ->
-// ​
-// "Eyes Open": 0.3252342680307727
-// ​
-// "Face Candidate Detected": true
-// ​
-// "Face Recognition": 0.6674974599316463
-// ​
-// Glasses: false                                   ->
-// ​
-// "Head Pose": Array(3) [ -6.101179017848855, -0.9526796653174112, -0.8817007163672532 ]       ->
-// ​
-// "Image Quality": 70.59932708740234
-// ​
-// Resize: 2.7027027027027026                                         ->
-// ​
-// Sunglasses: Array [ 20.95436507936509, 27.22477324263039 ]         ->
-// ​
-// focus: 86.36363636363637
-
-
-
   // PHOTO VALIDATION
   function validPhoto(resp) {
     console.log(resp)
-
+    resp = JSON.parse(resp)
     if (!"Brightness" in Object.keys(resp) || resp["Brightness"] < 90) {
       setInvalidPhoto("Picture needs to be bright!!");
       return false
     }
 
-    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != true) {
+
+    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != "true") {
       setInvalidPhoto("Picture needs to be colored!!");
       return false
     }
@@ -136,7 +110,7 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != true) {
+    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != "true") {
       setInvalidPhoto("No face detected!!");
       return false
     }
@@ -261,3 +235,32 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   }
 });
+
+
+
+
+// Brightness: 141.30041354355131
+// ​
+// "Colored Picture": true
+// ​
+// "Crop Position": Array(4) [ 43, 24, 228, … ]     ->
+// ​
+// Cropping: true                                   ->
+// ​
+// "Eyes Open": 0.3252342680307727
+// ​
+// "Face Candidate Detected": true
+// ​
+// "Face Recognition": 0.6674974599316463
+// ​
+// Glasses: false                                   ->
+// ​
+// "Head Pose": Array(3) [ -6.101179017848855, -0.9526796653174112, -0.8817007163672532 ]       ->
+// ​
+// "Image Quality": 70.59932708740234
+// ​
+// Resize: 2.7027027027027026                                         ->
+// ​
+// Sunglasses: Array [ 20.95436507936509, 27.22477324263039 ]         ->
+// ​
+// focus: 86.36363636363637
