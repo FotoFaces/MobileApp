@@ -75,7 +75,7 @@ export default function LoginScreen({ navigation }) {
 
     const loc = await Linking.canOpenURL(location);
 
-    // should wait for response    
+    // console.log(Linking.getInitialURL())
 
     if (loc) {
       await Linking.openURL(location);
