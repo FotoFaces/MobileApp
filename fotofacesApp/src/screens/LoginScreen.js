@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import React, { useState, useCallback } from 'react'
+import { TouchableOpacity, StyleSheet, View , Linking } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
@@ -60,7 +60,7 @@ export default function LoginScreen({ navigation }) {
     return 
   }
 
-  const onLoginSSO = () => {
+  const onLoginSSO = useCallback(async () => {
     const acceptedAccessTokenInfo = ["access_token", "token_type", "expires_in", "id_token"];
 
     // WSO2 APPLICATION, CALLs AND ENDPOINT DETAILS
@@ -71,13 +71,21 @@ export default function LoginScreen({ navigation }) {
     // Base64 encoded string: <Consumer Key>:<Consumer Secret>
     const authorizationBase64Credentials = "YWdoNDRSYWpNSmNZdkNJcTNsU01ydXRmUEowYTpKWVNZNU1iYkJQR0Y4WURYZmdoeUdKRnVmNFVh";
 
-    location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
+    let location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
+
+    const loc = await Linking.canOpenURL(location);
 
     // should wait for response    
 
-    let searchParams = new URL(location).searchParams;
+    if (loc) {
+      await Linking.openURL(location);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${location}`);
+    }
 
-    if (searchParams.has("code")) {
+    // let searchParams = new URL(location).searchParams;
+
+    if (false) {
 
       let code = searchParams.get("code");
 
@@ -110,7 +118,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     return
-  }
+  });
 
 
   return (
