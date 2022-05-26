@@ -121,10 +121,20 @@ export default function MainScreen({ route, navigation }) {
     }
 
     if (!"focus" in Object.keys(resp) || resp["focus"] < 80) {
-      setInvalidPhoto("Image shouldn't be blurred!!");
+      setInvalidPhoto("Face need to Look to the camera!!");
       return false
     }
 
+    if (!"Head Pose" in Object.keys(resp) || resp["Head Pose"][0] < 20|| resp["Head Pose"][1] < 20|| resp["Head Pose"][2] < 20) {
+      setInvalidPhoto("Face need to face to the camera!!");
+      return false
+    }
+
+    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"][0] < 90|| resp["Sunglasses"][1] < 90) {
+      setInvalidPhoto("Please remove Sunglasses!!");
+      return false
+    }
+    
     setInvalidPhoto(null)
     return true
   }
