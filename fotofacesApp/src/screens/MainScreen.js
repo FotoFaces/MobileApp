@@ -51,15 +51,17 @@ export default function MainScreen({ route, navigation }) {
   const validation = () => {
     setShow("TRUE")
     let formData = new FormData();
+
     formData.append("id", identifier);
     formData.append("candidate", image);
-
-    console.log("sending")
-
-    let resp = fetch('http://192.168.1.162:5000/', {
+    console.log(image);
+    //console.log(formData);192.168.33.46
+    //let resp = fetch('http://192.168.1.69:5000/', {
+    let resp = fetch('http://192.168.33.46:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
+      //console.log(data)
       data.json().then((properties) => {
         if(validPhoto(properties["feedback"])) {
 
@@ -80,6 +82,7 @@ export default function MainScreen({ route, navigation }) {
       setShow(null)
       reject(new Error(`Unable to retrieve events.\n${error.message}`));
     })
+    console.log(resp)
   }
 
   // PHOTO VALIDATION
@@ -118,10 +121,20 @@ export default function MainScreen({ route, navigation }) {
     }
 
     if (!"focus" in Object.keys(resp) || resp["focus"] < 80) {
-      setInvalidPhoto("Image shouldn't be blurred!!");
+      setInvalidPhoto("Face need to Look to the camera!!");
       return false
     }
 
+    if (!"Head Pose" in Object.keys(resp) || resp["Head Pose"][0] < 20|| resp["Head Pose"][1] < 20|| resp["Head Pose"][2] < 20) {
+      setInvalidPhoto("Face need to face to the camera!!");
+      return false
+    }
+
+    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"][0] < 90|| resp["Sunglasses"][1] < 90) {
+      setInvalidPhoto("Please remove Sunglasses!!");
+      return false
+    }
+    
     setInvalidPhoto(null)
     return true
   }
