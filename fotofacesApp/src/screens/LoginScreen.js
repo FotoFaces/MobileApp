@@ -31,7 +31,8 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-    let resp = fetch('http://192.168.1.162:8393/user/'+email.value, {
+    //let resp = fetch('http://192.168.1.69:8393/user/'+email.value, {
+    let resp = fetch('http://192.168.33.46:8393/user/'+email.value, {
       method: 'GET',
     }).then((data)=>{
       data.json().then((logins) => {
