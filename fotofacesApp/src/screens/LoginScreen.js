@@ -41,7 +41,6 @@ export default function LoginScreen({ navigation }) {
 
         if (hex_md5v === logins["password"]) {
           setShow(null)
-          console.log("MAIN SCREEN")
           navigation.navigate('MainScreen',
           {
             email: email.value,

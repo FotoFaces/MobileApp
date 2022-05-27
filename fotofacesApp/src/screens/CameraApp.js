@@ -8,7 +8,7 @@ import ls from 'local-storage'
 import MaskedView from "@react-native-community/masked-view"
 import { AnimatedCircularProgress } from "react-native-circular-progress"
 import { useIsFocused } from "@react-navigation/native";
-import { AppState } from "react-native"; 
+import { AppState } from "react-native";
 
 
 
@@ -28,6 +28,7 @@ export default function CameraApp({navigation}) {
   const [faceData, setFaceData] = React.useState([]);
   const [count,setCount]=React.useState(0);
   const [progressFill, setProgressFill]=React.useState(0);
+
 
 
   React.useEffect(() => {
@@ -94,7 +95,7 @@ export default function CameraApp({navigation}) {
       // if(count===2){
       //   if(faceData[0]["rollAngle"] > 5){
       //     setCount(3)
-      //     setProgressFill(75)        
+      //     setProgressFill(75)
       //   }else{
       //     return(
       //       <View style={styles.instructionsContainer}>
@@ -142,7 +143,7 @@ export default function CameraApp({navigation}) {
         const data = await camera.takePictureAsync({quality : 1, base64: true})
         ls.set('ImageUri',data.uri)
         ls.set('Image',data.base64)
-        navigation.navigate('MainScreen')
+        navigation.goBack();
 
       }
       else{

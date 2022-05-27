@@ -54,6 +54,7 @@ export default function MainScreen({ route, navigation }) {
 
     formData.append("id", identifier);
     formData.append("candidate", image);
+
     console.log(image);
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
@@ -139,9 +140,10 @@ export default function MainScreen({ route, navigation }) {
     return true
   }
 
+
   return (
     <Background>
-      <View style={{width: '100%', marginTop: '-30%', marginBottom: 40}}>
+      <View style={{width: '100%', marginTop: '-30%'}}>
           <View style={styles.header}></View>
           <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+old_photo}}/>
           <View style={styles.body}>
@@ -152,16 +154,18 @@ export default function MainScreen({ route, navigation }) {
           </View>
       </View>
 
+      <Paragraph>
+      </Paragraph>
+
       {show !== null ? <SimpleLottie /> :null }
 
       <Button
-        mode="outlined"
+        mode="contained"
         //onPress={openCamera}
-        onPress={() => navigation.navigate('CameraApp') }
+        onPress={() => navigation.push('CameraApp') }
       >
         Take a Photo
       </Button>
-
       <Button
         mode="outlined"
         onPress={pickImage}
@@ -177,21 +181,17 @@ export default function MainScreen({ route, navigation }) {
 
       {imageUri !== null ? <>
       <Header>New Photo</Header>
-
-      <Image style={{width: 200, height: 200, marginTop: -20, marginBottom: 8, borderRadius: 10, borderColor: "white", borderWidth: 4}} source={{
+      <Image style={{width: 180, height: 180}} source={{
           uri: imageUri
         }}/>
-
       <Button
         mode="outlined"
-        color={'white'}
-        style={{marginBottom: 40, backgroundColor: theme.colors.primary}}
         onPress={validation}
+        style={{marginBottom: 40}}
       >
         Validate Photo
       </Button>
       </> : null}
-
     </Background>
 
   )
@@ -199,19 +199,24 @@ export default function MainScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   header:{
-    height: 230,
-    width: '100%'
+    backgroundColor: theme.colors.primary,
+    height:200,
   },
   avatar: {
-    width: 200,
-    height: 200,
-    borderRadius: 90,
+    width: 130,
+    height: 130,
+    borderRadius: 63,
     borderWidth: 4,
     borderColor: "white",
     marginBottom:10,
     alignSelf:'center',
     position: 'absolute',
-    marginTop:70
+    marginTop:130
+  },
+  name:{
+    fontSize:22,
+    color:"#FFFFFF",
+    fontWeight:'600',
   },
   body:{
     marginTop:40,
@@ -223,12 +228,12 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:28,
-    color: '#ffffff',
+    color: "#696969",
     fontWeight: "600"
   },
   info:{
     fontSize:16,
-    color: '#ffffff',
+    color: theme.colors.primary,
     marginTop:10
   },
   description:{
@@ -245,32 +250,3 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   }
 });
-
-
-
-
-// Brightness: 141.30041354355131
-// ​
-// "Colored Picture": true
-// ​
-// "Crop Position": Array(4) [ 43, 24, 228, … ]     ->
-// ​
-// Cropping: true                                   ->
-// ​
-// "Eyes Open": 0.3252342680307727
-// ​
-// "Face Candidate Detected": true
-// ​
-// "Face Recognition": 0.6674974599316463
-// ​
-// Glasses: false                                   ->
-// ​
-// "Head Pose": Array(3) [ -6.101179017848855, -0.9526796653174112, -0.8817007163672532 ]       ->
-// ​
-// "Image Quality": 70.59932708740234
-// ​
-// Resize: 2.7027027027027026                                         ->
-// ​
-// Sunglasses: Array [ 20.95436507936509, 27.22477324263039 ]         ->
-// ​
-// focus: 86.36363636363637
