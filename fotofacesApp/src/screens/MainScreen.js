@@ -130,8 +130,18 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"][0] < 90|| resp["Sunglasses"][1] < 90) {
+    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"] != "true") {
       setInvalidPhoto("Please remove Sunglasses!!");
+      return false
+    }
+
+    if (!"hats" in Object.keys(resp) || resp["hats"] != "true") {
+      setInvalidPhoto("Please remove your hat!!");
+      return false
+    }
+
+    if (!"BackgroundAlign" in Object.keys(resp) || resp["BackgroundAlign"] != null ) {
+      setInvalidPhoto("Background not Align!!");
       return false
     }
     
