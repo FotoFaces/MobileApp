@@ -12,7 +12,9 @@ import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import md5 from "react-native-md5";
 import SimpleLottie from '../components/SimpleLottie'
-
+import * as Linking from 'expo-linking';
+import jwt_decode from "jwt-decode";
+import Paragraph from '../components/Paragraph'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: 'admin@ua.pt', error: '' })
@@ -62,15 +64,17 @@ export default function LoginScreen({ navigation }) {
   }
 
   const onLoginSSO = () => {
+    const [authFailed, setAuthFailed] = React.useState("");
     const acceptedAccessTokenInfo = ["access_token", "token_type", "expires_in", "id_token"];
 
     // WSO2 APPLICATION, CALLs AND ENDPOINT DETAILS
-    const authorizeEndpoint = "https://wso2-gw.ua.pt/authorize";
-    const tokenEndpoint = "https://wso2-gw.ua.pt/token";
-    const redirectURI = "http://localhost";
-    const consumerKey = "agh44RajMJcYvCIq3lSMrutfPJ0a"
+    const authorizeEndpoint = "https://wso2-gw.ua.pt/authorize"; // become authorized
+    const tokenEndpoint = "https://wso2-gw.ua.pt/token";         // get token
+    const redirectURI = Linking.createURL(); // create URL
+
+    const consumerKey = "agh44RajMJcYvCIq3lSMrutfPJ0a";
     // Base64 encoded string: <Consumer Key>:<Consumer Secret>
-    const authorizationBase64Credentials = "YWdoNDRSYWpNSmNZdkNJcTNsU01ydXRmUEowYTpKWVNZNU1iYkJQR0Y4WURYZmdoeUdKRnVmNFVh";
+    const authorizationBase64Credentials = "YWdoNDRSYWpNSmNZdkNJcTNsU01ydXRmUEowYTpUR2piaVp2eXlRa0ZsaER3dEJ5WGx5TUExam9h";
 
     location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
 
@@ -93,17 +97,7 @@ export default function LoginScreen({ navigation }) {
           headers: myHeaders
       }).then(response => response.json())
         .then(res => {
-            Object.keys(res).forEach((item, index) => {
-                if (acceptedAccessTokenInfo.includes(item)) {
-                  navigation.navigate('MainScreen',
-                  {
-                    email: email.value,
-                    identifier: logins["id"],
-                    old_photo: logins["photo"]
-                  }
-                  );
-                }
-            });
+          console.log(jwt_decode(res))
         })
         .catch(err => {
             console.log(`Received an error: ${err}`);
@@ -170,6 +164,9 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
       </View>
+      <Paragraph>
+      {Linking.createURL()}
+      </Paragraph>
     </Background>
   )
 }
