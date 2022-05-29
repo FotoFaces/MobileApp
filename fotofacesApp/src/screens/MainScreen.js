@@ -59,7 +59,8 @@ export default function MainScreen({ route, navigation }) {
     console.log(image);
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
-    let resp = fetch('http://192.168.33.46:5000/', {
+    //let resp = fetch('http://192.168.33.46:5000/', {
+    let resp = fetch('http://192.168.1.162:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
@@ -112,7 +113,7 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != "true") {
+    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] !== "true") {
       setInvalidPhoto("No face detected!!");
       return false
     }
@@ -122,7 +123,7 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"focus" in Object.keys(resp) || resp["focus"] < 90) {
+    if (!"focus" in Object.keys(resp) || resp["focus"] < 70) {
       setInvalidPhoto("Face need to Look to the camera!!");
       return false
     }
@@ -132,18 +133,18 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"] != "true") {
+    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"] !== "false") {
       setInvalidPhoto("Please remove Sunglasses!!");
       return false
     }
 
-    if (!"hats" in Object.keys(resp) || resp["hats"] != "true") {
+    if (!"hats" in Object.keys(resp) || resp["Hats"] !== "false") {
       setInvalidPhoto("Please remove your hat!!");
       return false
     }
 
 
-    
+
     setInvalidPhoto(null)
     return true
   }
@@ -190,7 +191,7 @@ export default function MainScreen({ route, navigation }) {
       <Image style={{width: 200, height: 200, marginTop: -20, marginBottom: 8, borderRadius: 10, borderColor: "white", borderWidth: 4}} source={{
           uri: imageUri
         }}/>
-      
+
       <Button
         mode="outlined"
         color={'white'}
