@@ -21,9 +21,9 @@ export default function MainScreen({ route, navigation }) {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log("i was here")
       const preview = ls.get('ImageUri')
-      const preview64 = ls.get("Image64")
+      const preview64 = ls.get("Image")
+      console.log(preview64)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
@@ -37,7 +37,6 @@ export default function MainScreen({ route, navigation }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
       base64: true,
     });
@@ -46,30 +45,35 @@ export default function MainScreen({ route, navigation }) {
       setImage(result.base64);
       setImageUri(result.uri)
     }
-    
+
   };
 
   const validation = () => {
     setShow("TRUE")
     let formData = new FormData();
+
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    console.log("sending")
 
-    let resp = fetch('http://192.168.1.70:5000/', {
+    console.log(image);
+    //console.log(formData);192.168.33.46
+    //let resp = fetch('http://192.168.1.69:5000/', {
+    let resp = fetch('http://192.168.33.46:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
+      //console.log(data)
       data.json().then((properties) => {
-        if(validPhoto(properties)) {
+        if(validPhoto(properties["feedback"])) {
+
           setShow(null)
-          navigation.navigate('PhotoAccept', { 
+          navigation.navigate('PhotoAccept', {
             email: email.value,
             identifier: identifier,
             old_photo: old_photo,
             name: name,
-            image: image,
+            image: properties["cropped"],
             imageUri: imageUri
           });
         } else {
@@ -80,46 +84,20 @@ export default function MainScreen({ route, navigation }) {
       setShow(null)
       reject(new Error(`Unable to retrieve events.\n${error.message}`));
     })
+    console.log(resp)
   }
-
-// Brightness: 141.30041354355131
-// ​
-// "Colored Picture": true
-// ​
-// "Crop Position": Array(4) [ 43, 24, 228, … ]     ->
-// ​
-// Cropping: true                                   ->
-// ​
-// "Eyes Open": 0.3252342680307727
-// ​
-// "Face Candidate Detected": true
-// ​
-// "Face Recognition": 0.6674974599316463
-// ​
-// Glasses: false                                   ->
-// ​
-// "Head Pose": Array(3) [ -6.101179017848855, -0.9526796653174112, -0.8817007163672532 ]       ->
-// ​
-// "Image Quality": 70.59932708740234
-// ​
-// Resize: 2.7027027027027026                                         ->
-// ​
-// Sunglasses: Array [ 20.95436507936509, 27.22477324263039 ]         ->
-// ​
-// focus: 86.36363636363637
-
-
 
   // PHOTO VALIDATION
   function validPhoto(resp) {
     console.log(resp)
-
+    resp = JSON.parse(resp)
     if (!"Brightness" in Object.keys(resp) || resp["Brightness"] < 90) {
       setInvalidPhoto("Picture needs to be bright!!");
       return false
     }
 
-    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != true) {
+
+    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != "true") {
       setInvalidPhoto("Picture needs to be colored!!");
       return false
     }
@@ -134,24 +112,42 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != true) {
+    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] != "true") {
       setInvalidPhoto("No face detected!!");
       return false
     }
 
-    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 50) {     // values
+    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 25) {     // values
       setInvalidPhoto("Image Quality needs to be better!!");
       return false
     }
 
-    if (!"focus" in Object.keys(resp) || resp["focus"] < 80) {
-      setInvalidPhoto("Image shouldn't be blurred!!");
+    if (!"focus" in Object.keys(resp) || resp["focus"] < 90) {
+      setInvalidPhoto("Face need to Look to the camera!!");
       return false
     }
 
+    if (!"Head Pose" in Object.keys(resp) || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+      setInvalidPhoto("Face need to face to the camera!!");
+      return false
+    }
+
+    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"] != "true") {
+      setInvalidPhoto("Please remove Sunglasses!!");
+      return false
+    }
+
+    if (!"hats" in Object.keys(resp) || resp["hats"] != "true") {
+      setInvalidPhoto("Please remove your hat!!");
+      return false
+    }
+
+
+    
     setInvalidPhoto(null)
     return true
   }
+
 
   return (
     <Background>
@@ -171,7 +167,7 @@ export default function MainScreen({ route, navigation }) {
       <Button
         mode="outlined"
         //onPress={openCamera}
-        onPress={() => navigation.navigate('CameraApp') }
+        onPress={() => navigation.push('CameraApp') }
       >
         Take a Photo
       </Button>
@@ -183,12 +179,11 @@ export default function MainScreen({ route, navigation }) {
         Gallery
       </Button>
 
-      {invalidPhoto !== null ? 
+      {invalidPhoto !== null ?
       <>
       <Text style={styles.error}>{invalidPhoto}</Text>
       </>
       : null}
-            
       {imageUri !== null ? <>
       <Header>New Photo</Header>
 

@@ -15,8 +15,8 @@ import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: '', error: '' })
-  const [password, setPassword] = useState({ value: '', error: '' })
+  const [email, setEmail] = useState({ value: 'admin@ua.pt', error: '' })
+  const [password, setPassword] = useState({ value: 'adminpg', error: '' })
   const [show, setShow] = useState(null)
 
   const onLoginPressed = () => {
@@ -31,7 +31,8 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-    let resp = fetch('http://192.168.1.70:8393/user/'+email.value, {
+    //let resp = fetch('http://192.168.1.69:8393/user/'+email.value, {
+    let resp = fetch('http://192.168.33.46:8393/user/'+email.value, {
       method: 'GET',
     }).then((data)=>{
       data.json().then((logins) => {
@@ -40,7 +41,7 @@ export default function LoginScreen({ navigation }) {
 
         if (hex_md5v === logins["password"]) {
           setShow(null)
-          navigation.navigate('MainScreen', 
+          navigation.navigate('MainScreen',
           {
             email: email.value,
             identifier: logins["id"],
@@ -57,7 +58,7 @@ export default function LoginScreen({ navigation }) {
       })
     })
 
-    return 
+    return
   }
 
   const onLoginSSO = () => {
@@ -73,7 +74,7 @@ export default function LoginScreen({ navigation }) {
 
     location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
 
-    // should wait for response    
+    // should wait for response
 
     let searchParams = new URL(location).searchParams;
 
@@ -94,7 +95,7 @@ export default function LoginScreen({ navigation }) {
         .then(res => {
             Object.keys(res).forEach((item, index) => {
                 if (acceptedAccessTokenInfo.includes(item)) {
-                  navigation.navigate('MainScreen', 
+                  navigation.navigate('MainScreen',
                   {
                     email: email.value,
                     identifier: logins["id"],

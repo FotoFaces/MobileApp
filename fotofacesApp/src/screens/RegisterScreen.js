@@ -15,6 +15,7 @@ import Paragraph from '../components/Paragraph'
 import md5 from "react-native-md5";
 import * as ImagePicker from 'expo-image-picker';
 import SimpleLottie from '../components/SimpleLottie'
+import ls from 'local-storage'
 
 
 export default function RegisterScreen({ navigation }) {
@@ -27,6 +28,18 @@ export default function RegisterScreen({ navigation }) {
   const [imageError, setimageError] = useState(null);
   const [show, setShow] = useState(null);
 
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const preview = ls.get('ImageUri')
+      const preview64 = ls.get("Image")
+      console.log(preview64)
+      if(preview !== null){
+        setImageUri(preview)
+        setImage(preview64)
+      }
+    });return unsubscribe;
+  }, [navigation]);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -70,8 +83,8 @@ export default function RegisterScreen({ navigation }) {
     formData.append("name", name.value);
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
-    
-    let resp = fetch('http://192.168.1.70:8393/user/2', {
+    //let resp = fetch('http://192.168.1.69:8393/user/2', {
+    let resp = fetch('http://192.168.33.46:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -133,7 +146,7 @@ export default function RegisterScreen({ navigation }) {
         mode="outlined"
         color={'white'}
         style={{backgroundColor: theme.colors.primary}}
-        onPress={() => navigation.navigate('CameraApp') }
+        onPress={() => navigation.push('CameraApp') }
       >
         Take a Photo
       </Button>
