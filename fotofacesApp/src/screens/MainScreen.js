@@ -116,25 +116,32 @@ export default function MainScreen({ route, navigation }) {
       return false
     }
 
-    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 50) {     // values
+    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 25) {     // values
       setInvalidPhoto("Image Quality needs to be better!!");
       return false
     }
 
-    if (!"focus" in Object.keys(resp) || resp["focus"] < 80) {
+    if (!"focus" in Object.keys(resp) || resp["focus"] < 90) {
       setInvalidPhoto("Face need to Look to the camera!!");
       return false
     }
 
-    if (!"Head Pose" in Object.keys(resp) || resp["Head Pose"][0] < 20|| resp["Head Pose"][1] < 20|| resp["Head Pose"][2] < 20) {
+    if (!"Head Pose" in Object.keys(resp) || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
       setInvalidPhoto("Face need to face to the camera!!");
       return false
     }
 
-    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"][0] < 90|| resp["Sunglasses"][1] < 90) {
+    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"] != "true") {
       setInvalidPhoto("Please remove Sunglasses!!");
       return false
     }
+
+    if (!"hats" in Object.keys(resp) || resp["hats"] != "true") {
+      setInvalidPhoto("Please remove your hat!!");
+      return false
+    }
+
+
     
     setInvalidPhoto(null)
     return true
