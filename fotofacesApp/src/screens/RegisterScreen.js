@@ -15,7 +15,7 @@ import Paragraph from '../components/Paragraph'
 import md5 from "react-native-md5";
 import * as ImagePicker from 'expo-image-picker';
 import SimpleLottie from '../components/SimpleLottie'
-import ls from 'local-storage'
+import ls, { set } from 'local-storage'
 
 
 export default function RegisterScreen({ navigation }) {
@@ -28,6 +28,18 @@ export default function RegisterScreen({ navigation }) {
   const [imageError, setimageError] = useState(null);
   const [show, setShow] = useState(null);
 
+  // properties
+  const [modal, setModal] = useState(null);
+  const [bright, setBright] = useState(null);
+  const [color, setColor] = useState(null);
+  const [eyes, setEyes] = useState(null);
+  const [face, setFace] = useState(null);
+  const [candidate, setCandidate] = useState(null);
+  const [quality, setQuality] = useState(null);
+  const [focus, setFocus] = useState(null);
+  const [pose, setPose] = useState(null);
+  const [sunglasses, setSunglasses] = useState(null);
+  const [hats, setHats] = useState(null);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -78,13 +90,17 @@ export default function RegisterScreen({ navigation }) {
     }
     setimageError(null)
 
+    if (!validation()) {
+        return
+    }
+
     let formData = new FormData();
     formData.append("photo", image);
     formData.append("name", name.value);
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://192.168.33.46:8393/user/2', {
+    let resp = fetch('http://20.67.62.59:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -98,6 +114,126 @@ export default function RegisterScreen({ navigation }) {
         }
       })
     })
+  }
+
+  function validation() {
+    setShow("TRUE")
+    let formData = new FormData();
+
+    formData.append("id", -1);
+    formData.append("candidate", image);
+
+    //console.log(formData);192.168.33.46
+    //let resp = fetch('http://192.168.1.69:5000/', {
+    let resp = fetch('http://20.67.62.59:5000/', {
+      method: 'POST',
+      body: formData
+    }).then((data)=>{
+      //console.log(data)
+      data.json().then((properties) => {
+        setModal("true")
+        if(validPhoto(properties["feedback"])) {
+          setShow(null)
+          return true;
+        } else {
+          setShow(null)
+          return false;
+        }
+      })
+    }).catch(function(error) {
+      setShow(null)
+      reject(new Error(`Unable to retrieve events.\n${error.message}`));
+    })
+  }
+
+  // PHOTO VALIDATION
+  function validPhoto(resp) {
+
+    console.log("resposta:" + resp)
+
+    if (resp == null) {
+        return false
+    }
+
+    resp = JSON.parse(resp)
+
+    let error = false
+
+    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 90) {
+        setBright("true");
+        error = true
+    } else {
+        setBright(null)
+    }
+
+    if (!resp.hasOwnProperty("Colored Picture") || resp["Colored Picture"] != "true") {
+        setColor("true");
+        error = true
+    } else {
+        setColor(null)
+    }
+
+    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.21) {
+        setEyes("true");
+        error = true
+    } else {
+        setEyes(null)
+    }
+
+    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
+        setFace("true");
+        error = true
+    } else {
+        setFace(null)
+    }
+
+    if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
+        setCandidate("true");
+        error = true
+    } else {
+        setCandidate(null)
+    }
+
+    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
+        setQuality("true");
+        error = true
+    } else {
+        setQuality(null)
+    }
+
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 90) {
+        setFocus("true");
+        error = true
+    } else {
+        setFocus(null)
+    }
+
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+        setPose("true");
+        error = true
+    } else {
+        setPose(null)
+    }
+
+    if (!resp.hasOwnProperty("Sunglasses") || resp["Sunglasses"] != "false") {
+        setSunglasses("true");
+        error = true
+    } else {
+        setSunglasses(null)
+    }
+
+    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+        setHats("true");
+        error = true
+    } else {
+        setHats(null)
+    }
+
+    if (error) {
+        return false
+    } else {
+        return true
+    }
   }
 
   return (
@@ -155,7 +291,35 @@ export default function RegisterScreen({ navigation }) {
       >
         Gallery
       </Button>
-      {imageError !== null ? <Text style={styles.error}>{imageError}</Text> : null}
+
+        {imageError ? <><Text style={styles.error}>Please Select a Photo</Text></> : null}
+
+        {modal ? <>
+        <View style={{alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', paddingTop: 20}}>
+                <Text>Bright: {bright ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Colored: {color ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Eyes Open: {eyes ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', paddingTop: 5}}>
+                <Text>Face Detected: {face ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Face Recognizion: {candidate ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', paddingTop: 5}}>
+                <Text>Quality: {quality ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Focus: {focus ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Front Face: {pose ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', paddingTop: 5}}>
+                <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+        </View>
+        </>: null}
+
       <Button
         mode="contained"
         onPress={onSignUpPressed}
