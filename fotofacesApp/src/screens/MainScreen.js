@@ -60,7 +60,7 @@ export default function MainScreen({ route, navigation }) {
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
     //let resp = fetch('http://192.168.33.46:5000/', {
-    let resp = fetch('http://192.168.1.162:5000/', {
+    let resp = fetch('http://20.67.62.59:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
