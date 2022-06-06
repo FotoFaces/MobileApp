@@ -15,15 +15,26 @@ export default function MainScreen({ route, navigation }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [imageUri, setImageUri] = useState(null);
-  const [invalidPhoto, setInvalidPhoto] = useState(null);
   const { email, identifier, old_photo, name } = route.params;
   const [show, setShow] = useState(null);
+
+  // properties
+  const [modal, setModal] = useState(null);
+  const [bright, setBright] = useState(null);
+  const [color, setColor] = useState(null);
+  const [eyes, setEyes] = useState(null);
+  const [face, setFace] = useState(null);
+  const [candidate, setCandidate] = useState(null);
+  const [quality, setQuality] = useState(null);
+  const [focus, setFocus] = useState(null);
+  const [pose, setPose] = useState(null);
+  const [sunglasses, setSunglasses] = useState(null);
+  const [hats, setHats] = useState(null);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const preview = ls.get('ImageUri')
       const preview64 = ls.get("Image")
-      console.log(preview64)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
@@ -55,17 +66,13 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-
-    console.log(image);
-    //console.log(formData);192.168.33.46
-    //let resp = fetch('http://192.168.1.69:5000/', {
-    //let resp = fetch('http://192.168.33.46:5000/', {
     let resp = fetch('http://20.67.62.59:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
       //console.log(data)
       data.json().then((properties) => {
+        setModal("true")
         if(validPhoto(properties["feedback"])) {
 
           setShow(null)
@@ -92,63 +99,86 @@ export default function MainScreen({ route, navigation }) {
   function validPhoto(resp) {
     console.log(resp)
     resp = JSON.parse(resp)
-    if (!"Brightness" in Object.keys(resp) || resp["Brightness"] < 90) {
-      setInvalidPhoto("Picture needs to be bright!!");
-      return false
+
+    let error = false
+
+    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 90) {
+        setBright("true");
+        error = true
+    } else {
+        setBright(null)
     }
 
-
-    if (!"Colored Picture" in Object.keys(resp) || resp["Colored Picture"] != "true") {
-      setInvalidPhoto("Picture needs to be colored!!");
-      return false
+    if (!resp.hasOwnProperty("Colored Picture") || resp["Colored Picture"] != "true") {
+        setColor("true");
+        error = true
+    } else {
+        setColor(null)
     }
 
-    if (!"Eyes Open" in Object.keys(resp) || resp["Eyes Open"] < 0.21) {
-      setInvalidPhoto("Face needs to have the eyes open!!");
-      return false
+    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.21) {
+        setEyes("true");
+        error = true
+    } else {
+        setEyes(null)
     }
 
-    if (!"Face Recognition" in Object.keys(resp) || resp["Face Recognition"] > 0.6) {
-      setInvalidPhoto("Picture needs to be the same person as the old image!!");
-      return false
+    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
+        setFace("true");
+        error = true
+    } else {
+        setFace(null)
+
     }
 
-    if (!"Face Candidate Detected" in Object.keys(resp) || resp["Face Candidate Detected"] !== "true") {
-      setInvalidPhoto("No face detected!!");
-      return false
+    if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
+        setCandidate("true");
+        error = true
+    } else {
+        setCandidate(null)
     }
 
-    if (!"Image Quality" in Object.keys(resp) || resp["Image Quality"] > 25) {     // values
-      setInvalidPhoto("Image Quality needs to be better!!");
-      return false
+    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
+        setQuality("true");
+        error = true
+    } else {
+        setQuality(null)
     }
 
-    if (!"focus" in Object.keys(resp) || resp["focus"] < 70) {
-      setInvalidPhoto("Face need to Look to the camera!!");
-      return false
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 90) {
+        setFocus("true");
+        error = true
+    } else {
+        setFocus(null)
     }
 
-    if (!"Head Pose" in Object.keys(resp) || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
-      setInvalidPhoto("Face need to face to the camera!!");
-      return false
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+        setPose("true");
+        error = true
+    } else {
+        setPose(null)
     }
 
-    if (!"Sunglasses" in Object.keys(resp) || resp["Sunglasses"] !== "false") {
-      setInvalidPhoto("Please remove Sunglasses!!");
-      return false
+    if (!resp.hasOwnProperty("Sunglasses") || resp["Sunglasses"] != "false") {
+        setSunglasses("true");
+        error = true
+    } else {
+        setSunglasses(null)
     }
 
-    if (!"hats" in Object.keys(resp) || resp["Hats"] !== "false") {
-      setInvalidPhoto("Please remove your hat!!");
-      return false
+    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+        setHats("true");
+        error = true
+    } else {
+        setHats(null)
     }
 
-
-
-    setInvalidPhoto(null)
-    return true
+    if (error) {
+        return false
+    } else {
+        return true
+    }
   }
-
 
   return (
     <Background>
@@ -180,11 +210,32 @@ export default function MainScreen({ route, navigation }) {
         Gallery
       </Button>
 
-      {invalidPhoto !== null ?
-      <>
-      <Text style={styles.error}>{invalidPhoto}</Text>
-      </>
-      : null}
+      {modal ? <>
+        <View style={{alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', paddingTop: 20}}>
+                <Text>Bright: {bright ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Colored: {color ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Eyes Open: {eyes ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', paddingTop: 5}}>
+                <Text>Face Detected: {face ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Face Recognizion: {candidate ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', paddingTop: 5}}>
+                <Text>Quality: {quality ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Focus: {focus ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Front Face: {pose ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', paddingTop: 5}}>
+                <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+            </View>
+        </View>
+        </>: null}
+
       {imageUri !== null ? <>
       <Header>New Photo</Header>
 
