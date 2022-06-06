@@ -31,12 +31,13 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 13,
-    color: theme.colors.secondary,
+    color: '#ff9e00',
     paddingTop: 8,
   },
   error: {
-    fontSize: 13,
-    color: theme.colors.error,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ff9e00',
     paddingTop: 8,
   },
 })

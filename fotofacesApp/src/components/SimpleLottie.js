@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import LottieView from "lottie-react-native";
 import { useState } from "react";
 import { isAbsolute } from "path-browserify";
@@ -17,13 +17,14 @@ export default function SimpleLottie() {
   }
   const styles = StyleSheet.create({
     animation: {
-      zIndex: 100,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'absolute',
-      top: 0,
-      width: 300,
-      height: 300,
-    },
+      top: -440,
+      width: 500,
+      height: 1500,
+      backgroundColor: '#0000005a',
+      zIndex: 10
+    }
   });

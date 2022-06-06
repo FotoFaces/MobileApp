@@ -5,8 +5,8 @@ import { theme } from '../core/theme'
 export default function Background({ children }) {
   return (
       <ImageBackground
-      source={require('../assets/background_dot.png')}
-      resizeMode="repeat"
+      source={require('../assets/angryimg.png')}
+      resizeMode="stretch"
       style={styles.background}
     >
       <ScrollView>

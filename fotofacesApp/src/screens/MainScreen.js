@@ -66,8 +66,6 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    //console.log(formData);192.168.33.46
-    //let resp = fetch('http://192.168.1.69:5000/', {
     let resp = fetch('http://20.67.62.59:5000/', {
       method: 'POST',
       body: formData
@@ -130,6 +128,7 @@ export default function MainScreen({ route, navigation }) {
         error = true
     } else {
         setFace(null)
+
     }
 
     if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
@@ -183,7 +182,7 @@ export default function MainScreen({ route, navigation }) {
 
   return (
     <Background>
-      <View style={{width: '100%', marginTop: '-30%'}}>
+      <View style={{width: '100%', marginTop: '-30%', marginBottom: 40}}>
           <View style={styles.header}></View>
           <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+old_photo}}/>
           <View style={styles.body}>
@@ -194,18 +193,16 @@ export default function MainScreen({ route, navigation }) {
           </View>
       </View>
 
-      <Paragraph>
-      </Paragraph>
-
       {show !== null ? <SimpleLottie /> :null }
 
       <Button
-        mode="contained"
+        mode="outlined"
         //onPress={openCamera}
         onPress={() => navigation.push('CameraApp') }
       >
         Take a Photo
       </Button>
+
       <Button
         mode="outlined"
         onPress={pickImage}
@@ -239,20 +236,23 @@ export default function MainScreen({ route, navigation }) {
         </View>
         </>: null}
 
-
       {imageUri !== null ? <>
       <Header>New Photo</Header>
-      <Image style={{width: 180, height: 180}} source={{
+
+      <Image style={{width: 200, height: 200, marginTop: -20, marginBottom: 8, borderRadius: 10, borderColor: "white", borderWidth: 4}} source={{
           uri: imageUri
         }}/>
+
       <Button
         mode="outlined"
+        color={'white'}
+        style={{marginBottom: 40, backgroundColor: theme.colors.primary}}
         onPress={validation}
-        style={{marginBottom: 40}}
       >
         Validate Photo
       </Button>
       </> : null}
+
     </Background>
 
   )
@@ -260,24 +260,19 @@ export default function MainScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   header:{
-    backgroundColor: theme.colors.primary,
-    height:200,
+    height: 230,
+    width: '100%'
   },
   avatar: {
-    width: 130,
-    height: 130,
-    borderRadius: 63,
+    width: 200,
+    height: 200,
+    borderRadius: 90,
     borderWidth: 4,
     borderColor: "white",
     marginBottom:10,
     alignSelf:'center',
     position: 'absolute',
-    marginTop:130
-  },
-  name:{
-    fontSize:22,
-    color:"#FFFFFF",
-    fontWeight:'600',
+    marginTop:70
   },
   body:{
     marginTop:40,
@@ -289,12 +284,12 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:28,
-    color: "#696969",
+    color: '#ffffff',
     fontWeight: "600"
   },
   info:{
     fontSize:16,
-    color: theme.colors.primary,
+    color: '#ffffff',
     marginTop:10
   },
   description:{
