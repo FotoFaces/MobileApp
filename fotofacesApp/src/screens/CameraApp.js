@@ -49,7 +49,7 @@ export default function CameraApp({navigation}) {
       }
       return (
         <View style={styles.instructionsContainer}>
-          <Text style={styles.instructions}>Please place your head inside the moldure, one face at a time</Text>
+          <Text style={styles.instructions}>Please place your head inside the moldure, one face at a time, and complete the steps</Text>
         </View>
       );
     }
@@ -123,6 +123,30 @@ export default function CameraApp({navigation}) {
           )
         }
       }
+      if(count===3){
+          if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>800){
+            return(
+              <View style={styles.instructionsContainer}>
+                <Text style={styles.instructions}>You're too close!! Please step back from the camera</Text>
+              </View>
+            )
+          }
+          return(
+            <View style={styles.instructionsContainer}>
+              <Text style={styles.instructions}>You can now take the picture, just press the button!!</Text>
+              <TouchableOpacity
+                  style={{
+                    alignContent: 'center',
+                    position: 'absolute',
+                    alignSelf: 'center',
+                    bottom:10
+                }}
+                onPress={() => takePictureNow()}>
+                <PictureIcon />
+              </TouchableOpacity>
+            </View>
+          )
+        }
     }
     // else{
     //   if(faceData[0]["bounds"]["size"]["width"]+faceData[0]["bounds"]["size"]["height"]>900){
@@ -173,10 +197,10 @@ export default function CameraApp({navigation}) {
           onFacesDetected={handleFacesDetected}
           faceDetectorSettings={{
             mode: FaceDetector.FaceDetectorMode.accurate,
-            //detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
-            //runClassifications: FaceDetector.FaceDetectorClassifications.all,
-            detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+            detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
+            //detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+            //runClassifications: FaceDetector.FaceDetectorClassifications.all,
             minDetectionInterval: 500,
             tracking: true
           }}>
@@ -192,16 +216,6 @@ export default function CameraApp({navigation}) {
         </Camera>
 
       </MaskedView>
-      <TouchableOpacity
-                  style={{
-                    alignContent: 'center',
-                    position: 'absolute',
-                    alignSelf: 'center',
-                    bottom:10
-                }}
-                onPress={() => takePictureNow()}>
-                <PictureIcon />
-        </TouchableOpacity>
       {box()}
     </SafeAreaView>
   </>
