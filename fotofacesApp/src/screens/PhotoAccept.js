@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
   button: {
-    flex:3,
+    flex:2,
     margin:5,
   },
   headline: {
