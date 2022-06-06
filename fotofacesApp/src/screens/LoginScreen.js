@@ -15,8 +15,8 @@ import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: 'admin@ua.pt', error: '' })
-  const [password, setPassword] = useState({ value: 'adminpg', error: '' })
+  const [email, setEmail] = useState({ value: '', error: '' })
+  const [password, setPassword] = useState({ value: '', error: '' })
   const [show, setShow] = useState(null)
 
   const onLoginPressed = () => {
