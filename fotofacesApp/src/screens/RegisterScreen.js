@@ -280,8 +280,6 @@ export default function RegisterScreen({ navigation }) {
       />
        <Button
         mode="outlined"
-        color={'white'}
-        style={{backgroundColor: theme.colors.primary}}
         onPress={() => navigation.push('CameraApp') }
       >
         Take a Photo
