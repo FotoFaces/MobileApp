@@ -88,8 +88,8 @@ export default function MainScreen({ route, navigation }) {
           setShow(null)
         }
       })
-    }).
-    
+    })
+
     console.log(resp)
   }
 

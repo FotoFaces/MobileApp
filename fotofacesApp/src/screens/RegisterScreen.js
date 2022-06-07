@@ -125,6 +125,7 @@ export default function RegisterScreen({ navigation }) {
 
     formData.append("id", -1);
     formData.append("candidate", image);
+    formData.append("reference", image);
 
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
@@ -133,7 +134,6 @@ export default function RegisterScreen({ navigation }) {
       body: formData
     }).then((data)=>{
       console.log(data)
-      console.log("here")
       data.json().then((properties) => {
         setModal("true")
         if(validPhoto(properties["feedback"])) {
@@ -160,7 +160,7 @@ export default function RegisterScreen({ navigation }) {
         return false
     }
 
-    // resp = JSON.parse(resp)
+    resp = JSON.parse(resp)
 
     let error = false
 
