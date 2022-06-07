@@ -91,8 +91,10 @@ export default function RegisterScreen({ navigation }) {
     setimageError(null)
 
     if (!validation()) {
-        return
+      setShow(null)
+      return
     }
+    setimageError(null)
 
     let formData = new FormData();
     formData.append("photo", image);
@@ -144,6 +146,9 @@ export default function RegisterScreen({ navigation }) {
       setShow(null)
       reject(new Error(`Unable to retrieve events.\n${error.message}`));
     })
+
+    setimageError("Error connecting to FotoFaces")
+    return false;
   }
 
   // PHOTO VALIDATION
@@ -181,17 +186,17 @@ export default function RegisterScreen({ navigation }) {
     }
 
     if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
-        setFace("true");
-        error = true
-    } else {
-        setFace(null)
-    }
-
-    if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
         setCandidate("true");
         error = true
     } else {
         setCandidate(null)
+    }
+
+    if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
+        setFace("true");
+        error = true
+    } else {
+        setFace(null)
     }
 
     if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
@@ -201,7 +206,7 @@ export default function RegisterScreen({ navigation }) {
         setQuality(null)
     }
 
-    if (!resp.hasOwnProperty("focus") || resp["focus"] < 90) {
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 80) {
         setFocus("true");
         error = true
     } else {

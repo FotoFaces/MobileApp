@@ -124,18 +124,18 @@ export default function MainScreen({ route, navigation }) {
     }
 
     if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
-        setFace("true");
-        error = true
-    } else {
-        setFace(null)
-
-    }
-
-    if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
         setCandidate("true");
         error = true
     } else {
         setCandidate(null)
+
+    }
+
+    if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
+        setFace("true");
+        error = true
+    } else {
+        setFace(null)
     }
 
     if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
@@ -145,7 +145,7 @@ export default function MainScreen({ route, navigation }) {
         setQuality(null)
     }
 
-    if (!resp.hasOwnProperty("focus") || resp["focus"] < 90) {
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 80) {
         setFocus("true");
         error = true
     } else {
