@@ -33,8 +33,11 @@ export default function MainScreen({ route, navigation }) {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      const preview = ls.get('ImageUri')
+      const preview =   ls.get('ImageUri')
       const preview64 = ls.get("Image")
+      ls.set('ImageUri',null)
+      ls.set("Image", null)
+
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
@@ -66,7 +69,7 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://20.67.62.59:5000/', {
+    let resp = fetch('http://20.23.116.163:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{

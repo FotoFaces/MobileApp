@@ -46,6 +46,8 @@ export default function RegisterScreen({ navigation }) {
       const preview = ls.get('ImageUri')
       const preview64 = ls.get("Image")
       console.log(preview64)
+      ls.set('ImageUri',null)
+      ls.set("Image", null)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
@@ -102,7 +104,7 @@ export default function RegisterScreen({ navigation }) {
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://20.67.62.59:8393/user/2', {
+    let resp = fetch('http://20.23.116.163:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -127,7 +129,7 @@ export default function RegisterScreen({ navigation }) {
 
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
-    let resp = fetch('http://20.67.62.59:5000/', {
+    let resp = fetch('http://20.23.116.163:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
