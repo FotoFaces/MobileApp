@@ -88,10 +88,8 @@ export default function MainScreen({ route, navigation }) {
           setShow(null)
         }
       })
-    }).catch(function(error) {
-      setShow(null)
-      reject(new Error(`Unable to retrieve events.\n${error.message}`));
-    })
+    }).
+    
     console.log(resp)
   }
 

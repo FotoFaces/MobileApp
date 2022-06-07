@@ -45,7 +45,7 @@ export default function RegisterScreen({ navigation }) {
     const unsubscribe = navigation.addListener('focus', () => {
       const preview = ls.get('ImageUri')
       const preview64 = ls.get("Image")
-      console.log(preview64)
+      //console.log(preview64)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
@@ -71,6 +71,7 @@ export default function RegisterScreen({ navigation }) {
   const onSignUpPressed = () => {
 
     setShow("TRUE")
+    setimageError(null)
 
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
@@ -131,20 +132,19 @@ export default function RegisterScreen({ navigation }) {
       method: 'POST',
       body: formData
     }).then((data)=>{
-      //console.log(data)
+      console.log(data)
+      console.log("here")
       data.json().then((properties) => {
         setModal("true")
         if(validPhoto(properties["feedback"])) {
           setShow(null)
+          setimageError(null)
           return true;
         } else {
           setShow(null)
           return false;
         }
       })
-    }).catch(function(error) {
-      setShow(null)
-      reject(new Error(`Unable to retrieve events.\n${error.message}`));
     })
 
     setimageError("Error connecting to FotoFaces")
@@ -160,7 +160,7 @@ export default function RegisterScreen({ navigation }) {
         return false
     }
 
-    resp = JSON.parse(resp)
+    // resp = JSON.parse(resp)
 
     let error = false
 
@@ -296,7 +296,7 @@ export default function RegisterScreen({ navigation }) {
         Gallery
       </Button>
 
-        {imageError ? <><Text style={styles.error}>Please Select a Photo</Text></> : null}
+        {imageError ? <><Text style={styles.error}>{imageError}</Text></> : null}
 
         {modal ? <>
         <View style={{alignItems: 'center'}}>
