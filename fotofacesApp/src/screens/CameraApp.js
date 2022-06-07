@@ -199,7 +199,7 @@ export default function CameraApp({navigation}) {
               mode: FaceDetector.FaceDetectorMode.accurate,
               //detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
               //runClassifications: FaceDetector.FaceDetectorClassifications.all,
-              detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+              detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
               runClassifications: FaceDetector.FaceDetectorClassifications.all,
               minDetectionInterval: 500,
               tracking: true
