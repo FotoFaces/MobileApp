@@ -103,7 +103,7 @@ export default function RegisterScreen({ navigation }) {
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://20.23.116.163:8393/user/2', {
+    let resp = fetch('http://192.168.1.162:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -125,17 +125,17 @@ export default function RegisterScreen({ navigation }) {
 
     formData.append("id", -1);
     formData.append("candidate", image);
-    formData.append("reference", image);
+    //formData.append("reference", image);
 
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
-    let resp = fetch('http://20.23.116.163:5000/', {
+    let resp = fetch('http://192.168.1.162:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
       console.log(data)
       data.json().then((properties) => {
-        setModal("true")
+        setModal(true)
         if(validPhoto(properties["feedback"])) {
           setShow(null)
           setimageError(null)
@@ -185,12 +185,12 @@ export default function RegisterScreen({ navigation }) {
         setEyes(null)
     }
 
-    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
-        setCandidate("true");
-        error = true
-    } else {
-        setCandidate(null)
-    }
+    //if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
+    //    setCandidate("true");
+    //    error = true
+    //} else {
+    //    setCandidate(null)
+    //}
 
     if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
         setFace("true");
@@ -213,7 +213,7 @@ export default function RegisterScreen({ navigation }) {
         setFocus(null)
     }
 
-    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 20|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
         setPose("true");
         error = true
     } else {
@@ -308,7 +308,7 @@ export default function RegisterScreen({ navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>Face Detected: {face ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
-                <Text style={{paddingLeft: 20}}>Face Recognizion: {candidate ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                //<Text style={{paddingLeft: 20}}>Face Recognizion: {candidate ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
@@ -318,7 +318,7 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
-                <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text>No Hats: {hats ? <Text>&#x2705;</Text> : <Text>&#x274C;</Text> }</Text>
                 <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
