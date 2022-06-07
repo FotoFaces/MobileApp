@@ -164,7 +164,7 @@ export default function RegisterScreen({ navigation }) {
 
     let error = false
 
-    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 90) {
+    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 100) {
         setBright("true");
         error = true
     } else {
@@ -178,14 +178,14 @@ export default function RegisterScreen({ navigation }) {
         setColor(null)
     }
 
-    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.21) {
+    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.20) {
         setEyes("true");
         error = true
     } else {
         setEyes(null)
     }
 
-    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
+    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
         setCandidate("true");
         error = true
     } else {
@@ -199,14 +199,14 @@ export default function RegisterScreen({ navigation }) {
         setFace(null)
     }
 
-    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
+    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 36) {     // values
         setQuality("true");
         error = true
     } else {
         setQuality(null)
     }
 
-    if (!resp.hasOwnProperty("focus") || resp["focus"] < 80) {
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 70) {
         setFocus("true");
         error = true
     } else {
