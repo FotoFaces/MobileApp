@@ -90,8 +90,9 @@ export default function RegisterScreen({ navigation }) {
       return
     }
     setimageError(null)
-
-    if (!validation()) {
+    const validationRet = validation()
+    console.log("VALIDATION RET  ", validationRet)
+    if ( validationRet === false) {
       setShow(null)
       return
     }
@@ -104,6 +105,7 @@ export default function RegisterScreen({ navigation }) {
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
     let resp = fetch('http://192.168.1.162:8393/user/2', {
+    //let resp = fetch('http://20.23.116.163:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -125,18 +127,21 @@ export default function RegisterScreen({ navigation }) {
 
     formData.append("id", -1);
     formData.append("candidate", image);
-    //formData.append("reference", image);
+    formData.append("reference", image);
 
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
-    let resp = fetch('http://192.168.1.162:5000/', {
+    //let resp = fetch('http://20.23.116.163:5000/', {
+    let resp = fetch('http://192.168.1.162:5000', {
       method: 'POST',
       body: formData
     }).then((data)=>{
       console.log(data)
       data.json().then((properties) => {
-        setModal(true)
-        if(validPhoto(properties["feedback"])) {
+        setModal("true")
+        const validPhotoRet = validPhoto(properties["feedback"])
+        console.log("VALIDPHOTORET  ",validPhotoRet)
+        if( validPhotoRet === false) { //NoError
           setShow(null)
           setimageError(null)
           return true;
@@ -146,9 +151,6 @@ export default function RegisterScreen({ navigation }) {
         }
       })
     })
-
-    setimageError("Error connecting to FotoFaces")
-    return false;
   }
 
   // PHOTO VALIDATION
@@ -185,12 +187,12 @@ export default function RegisterScreen({ navigation }) {
         setEyes(null)
     }
 
-    //if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
-    //    setCandidate("true");
-    //    error = true
-    //} else {
-    //    setCandidate(null)
-    //}
+    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
+        setCandidate("true");
+        error = true
+    } else {
+        setCandidate(null)
+    }
 
     if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
         setFace("true");
@@ -227,18 +229,15 @@ export default function RegisterScreen({ navigation }) {
         setSunglasses(null)
     }
 
-    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "true") {
         setHats("true");
-        error = true
+        //error = true
     } else {
         setHats(null)
     }
 
-    if (error) {
-        return false
-    } else {
-        return true
-    }
+    console.log("ERROR - > ", error)
+    return error
   }
 
   return (
@@ -308,7 +307,7 @@ export default function RegisterScreen({ navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>Face Detected: {face ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
-                //<Text style={{paddingLeft: 20}}>Face Recognizion: {candidate ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>Face Recognizion: {candidate ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
@@ -318,7 +317,7 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
-                <Text>No Hats: {hats ? <Text>&#x2705;</Text> : <Text>&#x274C;</Text> }</Text>
+                <Text>No Hats: {hats ? <Text>&#x2705;</Text>  : <Text>&#x274C;</Text> }</Text>
                 <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
