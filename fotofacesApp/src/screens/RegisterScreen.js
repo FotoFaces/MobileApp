@@ -40,6 +40,7 @@ export default function RegisterScreen({ navigation }) {
   const [pose, setPose] = useState(null);
   const [sunglasses, setSunglasses] = useState(null);
   const [hats, setHats] = useState(null);
+  const [valid, setValid] = useState(false);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -68,7 +69,8 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
-  const onSignUpPressed = () => {
+  const onSignUpPressed = async () => {
+    console.log("\n\n")
 
     setShow("TRUE")
     setimageError(null)
@@ -90,9 +92,10 @@ export default function RegisterScreen({ navigation }) {
       return
     }
     setimageError(null)
-    const validationRet = validation()
-    console.log("VALIDATION RET  ", validationRet)
-    if ( validationRet === false) {
+    const validationRet = await validation()
+
+    console.log("VALIDATION RET  ", valid)
+    if ( valid !== true ) {
       setShow(null)
       return
     }
@@ -121,7 +124,7 @@ export default function RegisterScreen({ navigation }) {
     })
   }
 
-  function validation() {
+  const validation = async () => {
     setShow("TRUE")
     let formData = new FormData();
 
@@ -132,21 +135,26 @@ export default function RegisterScreen({ navigation }) {
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
     //let resp = fetch('http://20.23.116.163:5000/', {
-    let resp = fetch('http://192.168.1.162:5000', {
+    let resp = await fetch('http://192.168.1.162:5000', {
       method: 'POST',
       body: formData
-    }).then((data)=>{
+    }).then( async (data)=>{
       console.log(data)
-      data.json().then((properties) => {
+      await data.json().then((properties) => {
         setModal("true")
         const validPhotoRet = validPhoto(properties["feedback"])
         console.log("VALIDPHOTORET  ",validPhotoRet)
-        if( validPhotoRet === false) { //NoError
+        console.log("VALID PHOTO ??  ",valid)
+        if( valid === false) { //NoError
           setShow(null)
           setimageError(null)
+          setValid(true)
+          console.log("VALID!!!")
           return true;
         } else {
           setShow(null)
+          console.log("NOT VALID!!!")
+          setValid(false)
           return false;
         }
       })
@@ -229,7 +237,7 @@ export default function RegisterScreen({ navigation }) {
         setSunglasses(null)
     }
 
-    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "true") {
+    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
         setHats("true");
         //error = true
     } else {
