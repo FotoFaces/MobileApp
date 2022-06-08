@@ -66,7 +66,7 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://192.168.1.162:5000/', {
+    let resp = fetch('http://192.168.1.70:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
@@ -74,7 +74,7 @@ export default function MainScreen({ route, navigation }) {
       data.json().then((properties) => {
         setModal("true")
         if(validPhoto(properties["feedback"])) {
-
+          setModal(null)
           setShow(null)
           navigation.navigate('PhotoAccept', {
             email: email.value,
@@ -155,7 +155,7 @@ export default function MainScreen({ route, navigation }) {
         setFocus(null)
     }
 
-    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 20|| resp["Head Pose"][1] > 20|| resp["Head Pose"][2] > 20) {
         setPose("true");
         error = true
     } else {
