@@ -66,17 +66,22 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://192.168.1.162:5000/', {
+    console.log("before")
+
+    let resp = fetch('http://192.168.1.70:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
       data.json().then((properties) => {
         setModal("true")
-        if(validPhoto(properties["feedback"])) {
+        const validPhotoRet = validPhoto(properties["feedback"])
+        if(validPhotoRet) {
           setModal(null)
           setShow(null)
-          navigation.navigate('PhotoAccept', {
-            email: email.value,
+          console.log("valid")
+          navigation.navigate('PhotoAccept', 
+          {
+            email: email,
             identifier: identifier,
             old_photo: old_photo,
             name: name,
@@ -100,7 +105,9 @@ export default function MainScreen({ route, navigation }) {
         return false
     }
 
+    console.log("here")
     resp = JSON.parse(resp)
+    console.log(resp)
 
     let error = false
 
@@ -174,6 +181,8 @@ export default function MainScreen({ route, navigation }) {
         setHats(null)
     }
 
+    console.log("error ", error)
+
     if (error) {
         return false
     } else {
@@ -232,7 +241,7 @@ export default function MainScreen({ route, navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
-                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Glasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
         </>: null}

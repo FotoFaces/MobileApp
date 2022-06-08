@@ -20,7 +20,7 @@ export default function PhotoAccept({ route, navigation }) {
     let formData = new FormData();
     formData.append("param", image);
 
-    fetch('http://192.168.1.162:8393/image/'+identifier, {
+    fetch('http://192.168.1.70:8393/image/'+identifier, {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -57,9 +57,6 @@ export default function PhotoAccept({ route, navigation }) {
             <View style={styles.button}>
               <Button
                 mode="outlined"
-                style={{
-                  alignSelf:"start"
-                }}
                 onPress={acceptPhoto}>
                   Yes
               </Button>
