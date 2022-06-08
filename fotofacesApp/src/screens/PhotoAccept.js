@@ -20,7 +20,7 @@ export default function PhotoAccept({ route, navigation }) {
     let formData = new FormData();
     formData.append("param", image);
 
-    fetch('http://192.168.1.70:8393/image/'+identifier, {
+    fetch('http://20.31.50.224:8393/image/'+identifier, {
       method: 'PUT',
       body: formData
     }).then((data)=>{

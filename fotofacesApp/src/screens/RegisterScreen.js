@@ -106,7 +106,7 @@ export default function RegisterScreen({ navigation }) {
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://192.168.1.70:8393/user/2', {
+    let resp = fetch('http://20.31.50.224:8393/user/2', {
     //let resp = fetch('http://20.23.116.163:8393/user/2', {
       method: 'PUT',
       body: formData
@@ -134,7 +134,7 @@ export default function RegisterScreen({ navigation }) {
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
     //let resp = fetch('http://20.23.116.163:5000/', {
-    let resp = await fetch('http://192.168.1.70:5000', {
+    let resp = await fetch('http://20.31.50.224:5000', {
       method: 'POST',
       body: formData
     }).then( async (data)=>{
