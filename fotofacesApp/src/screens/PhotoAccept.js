@@ -57,6 +57,9 @@ export default function PhotoAccept({ route, navigation }) {
             <View style={styles.button}>
               <Button
                 mode="outlined"
+                style={{
+                  alignSelf:"start"
+                }}
                 onPress={acceptPhoto}>
                   Yes
               </Button>

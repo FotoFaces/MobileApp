@@ -66,11 +66,10 @@ export default function MainScreen({ route, navigation }) {
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://192.168.1.70:5000/', {
+    let resp = fetch('http://192.168.1.162:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
-      //console.log(data)
       data.json().then((properties) => {
         setModal("true")
         if(validPhoto(properties["feedback"])) {
@@ -89,7 +88,6 @@ export default function MainScreen({ route, navigation }) {
         }
       })
     })
-
     console.log(resp)
   }
 
@@ -169,7 +167,7 @@ export default function MainScreen({ route, navigation }) {
         setSunglasses(null)
     }
 
-    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+    if (!resp.hasOwnProperty("Hats") || resp["Hats"] != "false") {
         setHats("true");
         error = true
     } else {

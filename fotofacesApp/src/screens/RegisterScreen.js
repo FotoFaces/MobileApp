@@ -40,7 +40,6 @@ export default function RegisterScreen({ navigation }) {
   const [pose, setPose] = useState(null);
   const [sunglasses, setSunglasses] = useState(null);
   const [hats, setHats] = useState(null);
-  const [valid, setValid] = useState(false);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -59,7 +58,6 @@ export default function RegisterScreen({ navigation }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
       base64: true,
     });
@@ -94,20 +92,21 @@ export default function RegisterScreen({ navigation }) {
     }
     setimageError(null)
     const validationRet = await validation()
-    
-    console.log("VALIDATION  ", valid)
-    if ( valid !== true ) {
+
+    if ( valid !== "true" ) {
       setShow(null)
       return
     }
 
+  }
+  const RegisterUser = () => {
     let formData = new FormData();
     formData.append("photo", image);
     formData.append("name", name.value);
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://192.168.1.70:8393/user/2', {
+    let resp = fetch('http://192.168.1.162:8393/user/2', {
     //let resp = fetch('http://20.23.116.163:8393/user/2', {
       method: 'PUT',
       body: formData
@@ -135,43 +134,40 @@ export default function RegisterScreen({ navigation }) {
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
     //let resp = fetch('http://20.23.116.163:5000/', {
-    let resp = await fetch('http://192.168.1.70:5000', {
+    let resp = await fetch('http://192.168.1.162:5000', {
       method: 'POST',
       body: formData
     }).then( async (data)=>{
       console.log(data)
-      await data.json().then((properties) => {
+      await data.json().then(async (properties) => {
         setModal("true")
-        const validPhotoRet = validPhoto(properties["feedback"])
+        const validPhotoRet = await validPhoto(properties["feedback"])
+
         console.log("VALIDPHOTORET  ",validPhotoRet)
         if( validPhotoRet === false) { //NoError
           setModal(null)
           setShow(null)
           setimageError(null)
-          setValid(true)
-          console.log("VALID!!!")
+          RegisterUser()
           return true;
         } else {
           setShow(null)
-          console.log("NOT VALID!!!")
-          setValid(false)
-          return false; 
+          return false;
         }
       })
     }).catch(() => {
       console.log("Error connecting to FotoFaces")
       setShow(null)
       setimageError("Error Connecting to FotoFaces")
-      setValid(false)
       setModal(null)
       return false
     })
 
-    console.log("here")
+    console.log("here, ", resp)
   }
 
   // PHOTO VALIDATION
-  function validPhoto(resp) {
+  const validPhoto = async (resp) => {
 
     console.log("resposta:" + resp)
 
@@ -239,6 +235,7 @@ export default function RegisterScreen({ navigation }) {
         setPose(null)
     }
 
+    // Glasses como sunglasses
     if (!resp.hasOwnProperty("Sunglasses") || resp["Sunglasses"] != "false") {
         setSunglasses("true");
         error = true
@@ -246,9 +243,9 @@ export default function RegisterScreen({ navigation }) {
         setSunglasses(null)
     }
 
-    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+    if (!resp.hasOwnProperty("Hats") || resp["Hats"] != "false") {
         setHats("true");
-        //error = true
+        error = true
     } else {
         setHats(null)
     }
@@ -335,7 +332,7 @@ export default function RegisterScreen({ navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>No Hats: {hats ? <Text>&#x2705;</Text>  : <Text>&#x274C;</Text> }</Text>
-                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Glasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
         </>: null}
@@ -350,7 +347,12 @@ export default function RegisterScreen({ navigation }) {
       </Button>
       <View style={styles.row}>
         <Text style={{color: '#ffffff'}}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
+        <TouchableOpacity onPress={() => {
+          ls.set("Image", null)
+          ls.set("ImageUri", null)
+          navigation.replace('LoginScreen')
+        }
+        }>
           <Text style={styles.link}>Login</Text>
         </TouchableOpacity>
       </View>
