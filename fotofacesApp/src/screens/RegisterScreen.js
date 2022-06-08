@@ -40,6 +40,7 @@ export default function RegisterScreen({ navigation }) {
   const [pose, setPose] = useState(null);
   const [sunglasses, setSunglasses] = useState(null);
   const [hats, setHats] = useState(null);
+  const [valid, setValid] = useState(false);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -68,7 +69,8 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
-  const onSignUpPressed = () => {
+  const onSignUpPressed = async () => {
+    console.log("\n\n")
 
     setShow("TRUE")
     setimageError(null)
@@ -90,8 +92,10 @@ export default function RegisterScreen({ navigation }) {
       return
     }
     setimageError(null)
+    const validationRet = await validation()
 
-    if (!validation()) {
+    console.log("VALIDATION RET  ", valid)
+    if ( valid !== true ) {
       setShow(null)
       return
     }
@@ -103,7 +107,8 @@ export default function RegisterScreen({ navigation }) {
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://20.23.116.163:8393/user/2', {
+    let resp = fetch('http://192.168.1.162:8393/user/2', {
+    //let resp = fetch('http://20.23.116.163:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -119,7 +124,7 @@ export default function RegisterScreen({ navigation }) {
     })
   }
 
-  function validation() {
+  const validation = async () => {
     setShow("TRUE")
     let formData = new FormData();
 
@@ -129,26 +134,31 @@ export default function RegisterScreen({ navigation }) {
 
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
-    let resp = fetch('http://20.23.116.163:5000/', {
+    //let resp = fetch('http://20.23.116.163:5000/', {
+    let resp = await fetch('http://192.168.1.162:5000', {
       method: 'POST',
       body: formData
-    }).then((data)=>{
+    }).then( async (data)=>{
       console.log(data)
-      data.json().then((properties) => {
+      await data.json().then((properties) => {
         setModal("true")
-        if(validPhoto(properties["feedback"])) {
+        const validPhotoRet = validPhoto(properties["feedback"])
+        console.log("VALIDPHOTORET  ",validPhotoRet)
+        console.log("VALID PHOTO ??  ",valid)
+        if( valid === false) { //NoError
           setShow(null)
           setimageError(null)
+          setValid(true)
+          console.log("VALID!!!")
           return true;
         } else {
           setShow(null)
+          console.log("NOT VALID!!!")
+          setValid(false)
           return false;
         }
       })
     })
-
-    setimageError("Error connecting to FotoFaces")
-    return false;
   }
 
   // PHOTO VALIDATION
@@ -213,7 +223,7 @@ export default function RegisterScreen({ navigation }) {
         setFocus(null)
     }
 
-    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 20|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
         setPose("true");
         error = true
     } else {
@@ -229,16 +239,13 @@ export default function RegisterScreen({ navigation }) {
 
     if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
         setHats("true");
-        error = true
+        //error = true
     } else {
         setHats(null)
     }
 
-    if (error) {
-        return false
-    } else {
-        return true
-    }
+    console.log("ERROR - > ", error)
+    return error
   }
 
   return (
@@ -318,7 +325,7 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
-                <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text>No Hats: {hats ? <Text>&#x2705;</Text>  : <Text>&#x274C;</Text> }</Text>
                 <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
