@@ -60,7 +60,7 @@ export default function LoginScreen({ navigation }) {
       })
     }).catch((error) => {
       setShow(null)
-      setErrorMessage("Error Conecting to the database, please try again")
+      setErrorMessage("Error conecting to the database, please try again")
     })
 
     return

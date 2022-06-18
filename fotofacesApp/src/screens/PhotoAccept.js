@@ -31,7 +31,7 @@ export default function PhotoAccept({ route, navigation }) {
       navigation.navigate('StartScreen')
     }).catch((error) => {
       setShow(null)
-      setErrorMessage("Erro connecting to the database, please try again")
+      setErrorMessage("Error connecting to the database, please try again")
     })
   }
 

@@ -46,8 +46,8 @@ export default function RegisterScreen({ navigation }) {
       const preview = ls.get('ImageUri')
       const preview64 = ls.get("Image")
       //console.log(preview64)
-      // ls.set('ImageUri',null)
-      // ls.set("Image", null)
+      ls.set('ImageUri',null)
+      ls.set("Image", null)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
@@ -165,7 +165,7 @@ export default function RegisterScreen({ navigation }) {
     }).catch(() => {
       console.log("Error connecting to FotoFaces")
       setShow(null)
-      setimageError("Error Connecting to FotoFaces, please try again")
+      setimageError("Error Connecting to FotoFaces API, please try again")
       setModal(null)
       return false
     })
@@ -339,7 +339,7 @@ export default function RegisterScreen({ navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>No Hats: {hats ? <Text>&#x2705;</Text>  : <Text>&#x274C;</Text> }</Text>
-                <Text style={{paddingLeft: 20}}>No Glasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
         </>: null}

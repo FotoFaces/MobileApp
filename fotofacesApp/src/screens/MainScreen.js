@@ -101,7 +101,7 @@ export default function MainScreen({ route, navigation }) {
     }).catch((error) => {
       setShow(null)
       setModal(null)
-      setErrorMessage("Erro connecting to the FotFaces API, please try again")
+      setErrorMessage("Error connecting to the FotFaces API, please try again")
     })
     console.log(resp)
   }
@@ -253,7 +253,7 @@ export default function MainScreen({ route, navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
-                <Text style={{paddingLeft: 20}}>No Glasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
         </>: null}

@@ -17,6 +17,7 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.piprojeto.fotofacesApp",
       "supportsTablet": true
     },
     "android": {
