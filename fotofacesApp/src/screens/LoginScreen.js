@@ -18,9 +18,11 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
   const [show, setShow] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const onLoginPressed = () => {
     setShow("TRUE")
+    setErrorMessage(null)
 
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
@@ -56,6 +58,9 @@ export default function LoginScreen({ navigation }) {
           setPassword({ ...password, error: "Email or password incorrect" })
         }
       })
+    }).catch((error) => {
+      setShow(null)
+      setErrorMessage("Error Conecting to the database, please try again")
     })
 
     return
@@ -152,17 +157,19 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {errorMessage !== null ? <><Text style={styles.error}>{errorMessage}</Text></> : null}
+
       <Button mode="outlined"
         color={'white'}
         style={{backgroundColor: theme.colors.primary}} onPress={onLoginPressed}>
         Login
       </Button>
 
-      <Button mode="outlined"
+      {/* <Button mode="outlined"
         color={'white'}
         style={{backgroundColor: theme.colors.primary}} onPress={onLoginSSO}>
         SSO Login
-      </Button>
+      </Button> */}
 
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
@@ -192,4 +199,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#9be4ff',
   },
+  error: {
+    fontSize: 20,
+    color: theme.colors.error,
+    paddingTop: 8,
+  }
 })

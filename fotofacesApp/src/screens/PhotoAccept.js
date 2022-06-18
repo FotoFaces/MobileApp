@@ -7,15 +7,18 @@ import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
 import { Text, View, StyleSheet, Image } from 'react-native';
 import SimpleLottie from '../components/SimpleLottie'
+import { theme } from '../core/theme'
 
 
 export default function PhotoAccept({ route, navigation }) {
 
   const { email, identifier, old_photo, name, image, imageUri } = route.params;
   const [show, setShow] = React.useState(null);
+  const [errorMessage, setErrorMessage] = React.useState(null);
 
   const acceptPhoto = () => {
     setShow("TRUE")
+    setErrorMessage(null)
     // update photo
     let formData = new FormData();
     formData.append("param", image);
@@ -26,7 +29,10 @@ export default function PhotoAccept({ route, navigation }) {
     }).then((data)=>{
       setShow(null)
       navigation.navigate('StartScreen')
-      })
+    }).catch((error) => {
+      setShow(null)
+      setErrorMessage("Erro connecting to the database, please try again")
+    })
   }
 
   return (
@@ -72,6 +78,7 @@ export default function PhotoAccept({ route, navigation }) {
               </Button>
             </View>
           </View>
+          {errorMessage !== null ? <><Text style={styles.error}>{errorMessage}</Text></> : null}
       </View>
     </Background>
   )
@@ -112,5 +119,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 19,
     lineHeight: 21
+  },
+  error: {
+    fontSize: 20,
+    color: theme.colors.error,
+    paddingTop: 8,
   }
 })

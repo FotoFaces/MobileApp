@@ -30,6 +30,7 @@ export default function MainScreen({ route, navigation }) {
   const [pose, setPose] = useState(null);
   const [sunglasses, setSunglasses] = useState(null);
   const [hats, setHats] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -61,6 +62,8 @@ export default function MainScreen({ route, navigation }) {
 
   const validation = () => {
     setShow("TRUE")
+    setErrorMessage(null)
+
     let formData = new FormData();
 
     formData.append("id", identifier);
@@ -92,6 +95,10 @@ export default function MainScreen({ route, navigation }) {
           setShow(null)
         }
       })
+    }).catch((error) => {
+      setShow(null)
+      setModal(null)
+      setErrorMessage("Erro connecting to the FotFaces API, please try again")
     })
     console.log(resp)
   }
@@ -220,6 +227,8 @@ export default function MainScreen({ route, navigation }) {
         Gallery
       </Button>
 
+      {errorMessage !== null ? <><Text style={styles.error}>{errorMessage}</Text></> : null}
+
       {modal ? <>
         <View style={{alignItems: 'center'}}>
             <View style={{flexDirection: 'row', paddingTop: 20}}>
@@ -312,7 +321,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: theme.colors.error,
     paddingTop: 8,
-    paddingTop: 30,
-    paddingBottom: 10
   }
 });

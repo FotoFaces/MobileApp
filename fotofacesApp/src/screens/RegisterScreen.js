@@ -100,6 +100,7 @@ export default function RegisterScreen({ navigation }) {
 
 
   const RegisterUser = () => {
+    setimageError(null)
     let formData = new FormData();
     formData.append("photo", image);
     formData.append("name", name.value);
@@ -120,11 +121,15 @@ export default function RegisterScreen({ navigation }) {
           setimageError("Error creating user, did you use correct data ?")
         }
       })
+    }).catch((error) => {
+      setShow(null)
+      setimageError("Error connecting to the database, please try again")
     })
   }
 
   const validation = async () => {
     setShow("TRUE")
+    setimageError(null)
     let formData = new FormData();
 
     formData.append("id", -1);
@@ -158,7 +163,7 @@ export default function RegisterScreen({ navigation }) {
     }).catch(() => {
       console.log("Error connecting to FotoFaces")
       setShow(null)
-      setimageError("Error Connecting to FotoFaces")
+      setimageError("Error Connecting to FotoFaces, please try again")
       setModal(null)
       return false
     })
