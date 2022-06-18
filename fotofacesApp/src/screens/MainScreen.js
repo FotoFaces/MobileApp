@@ -30,6 +30,7 @@ export default function MainScreen({ route, navigation }) {
   const [pose, setPose] = useState(null);
   const [sunglasses, setSunglasses] = useState(null);
   const [hats, setHats] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -64,23 +65,29 @@ export default function MainScreen({ route, navigation }) {
 
   const validation = () => {
     setShow("TRUE")
+    setErrorMessage(null)
+
     let formData = new FormData();
 
     formData.append("id", identifier);
     formData.append("candidate", image);
 
-    let resp = fetch('http://20.23.116.163:5000/', {
+    console.log("before")
+
+    let resp = fetch('http://20.31.50.224:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
-      //console.log(data)
       data.json().then((properties) => {
         setModal("true")
-        if(validPhoto(properties["feedback"])) {
-
+        const validPhotoRet = validPhoto(properties["feedback"])
+        if(validPhotoRet) {
+          setModal(null)
           setShow(null)
-          navigation.navigate('PhotoAccept', {
-            email: email.value,
+          console.log("valid")
+          navigation.navigate('PhotoAccept', 
+          {
+            email: email,
             identifier: identifier,
             old_photo: old_photo,
             name: name,
@@ -91,21 +98,30 @@ export default function MainScreen({ route, navigation }) {
           setShow(null)
         }
       })
-    }).catch(function(error) {
+    }).catch((error) => {
       setShow(null)
-      reject(new Error(`Unable to retrieve events.\n${error.message}`));
+      setModal(null)
+      setErrorMessage("Erro connecting to the FotFaces API, please try again")
     })
     console.log(resp)
   }
 
   // PHOTO VALIDATION
   function validPhoto(resp) {
-    console.log(resp)
+
+    console.log("resposta:" + resp)
+
+    if (resp == null) {
+        return false
+    }
+
+    console.log("here")
     resp = JSON.parse(resp)
+    console.log(resp)
 
     let error = false
 
-    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 90) {
+    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 100) {
         setBright("true");
         error = true
     } else {
@@ -119,19 +135,18 @@ export default function MainScreen({ route, navigation }) {
         setColor(null)
     }
 
-    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.21) {
+    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.20) {
         setEyes("true");
         error = true
     } else {
         setEyes(null)
     }
 
-    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
+    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
         setCandidate("true");
         error = true
     } else {
         setCandidate(null)
-
     }
 
     if (!resp.hasOwnProperty("Face Candidate Detected") || resp["Face Candidate Detected"] != "true") {
@@ -141,21 +156,21 @@ export default function MainScreen({ route, navigation }) {
         setFace(null)
     }
 
-    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
+    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 36) {     // values
         setQuality("true");
         error = true
     } else {
         setQuality(null)
     }
 
-    if (!resp.hasOwnProperty("focus") || resp["focus"] < 80) {
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 70) {
         setFocus("true");
         error = true
     } else {
         setFocus(null)
     }
 
-    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 20|| resp["Head Pose"][1] > 20|| resp["Head Pose"][2] > 20) {
         setPose("true");
         error = true
     } else {
@@ -169,12 +184,14 @@ export default function MainScreen({ route, navigation }) {
         setSunglasses(null)
     }
 
-    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+    if (!resp.hasOwnProperty("Hats") || resp["Hats"] != "false") {
         setHats("true");
         error = true
     } else {
         setHats(null)
     }
+
+    console.log("error ", error)
 
     if (error) {
         return false
@@ -213,6 +230,8 @@ export default function MainScreen({ route, navigation }) {
         Gallery
       </Button>
 
+      {errorMessage !== null ? <><Text style={styles.error}>{errorMessage}</Text></> : null}
+
       {modal ? <>
         <View style={{alignItems: 'center'}}>
             <View style={{flexDirection: 'row', paddingTop: 20}}>
@@ -234,7 +253,7 @@ export default function MainScreen({ route, navigation }) {
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
                 <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
-                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text style={{paddingLeft: 20}}>No Glasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
         </>: null}
@@ -305,7 +324,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: theme.colors.error,
     paddingTop: 8,
-    paddingTop: 30,
-    paddingBottom: 10
   }
 });

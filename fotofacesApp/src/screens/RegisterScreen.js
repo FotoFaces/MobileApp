@@ -45,21 +45,21 @@ export default function RegisterScreen({ navigation }) {
     const unsubscribe = navigation.addListener('focus', () => {
       const preview = ls.get('ImageUri')
       const preview64 = ls.get("Image")
-      console.log(preview64)
-      ls.set('ImageUri',null)
-      ls.set("Image", null)
+      //console.log(preview64)
+      // ls.set('ImageUri',null)
+      // ls.set("Image", null)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)
       }
     });return unsubscribe;
   }, [navigation]);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
       base64: true,
     });
@@ -70,9 +70,11 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
-  const onSignUpPressed = () => {
+  const onSignUpPressed = async () => {
+    console.log("\n\n")
 
     setShow("TRUE")
+    setimageError(null)
 
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
@@ -91,20 +93,24 @@ export default function RegisterScreen({ navigation }) {
       return
     }
     setimageError(null)
+    const validationRet = await validation()
 
-    if (!validation()) {
-      setShow(null)
-      return
-    }
+    setShow(null)
+    return
+
+  }
+
+
+  const RegisterUser = () => {
     setimageError(null)
-
     let formData = new FormData();
     formData.append("photo", image);
     formData.append("name", name.value);
     formData.append("password", md5.hex_md5( password.value ));
     formData.append("email", email.value);
     //let resp = fetch('http://192.168.1.69:8393/user/2', {
-    let resp = fetch('http://20.23.116.163:8393/user/2', {
+    let resp = fetch('http://20.31.50.224:8393/user/2', {
+    //let resp = fetch('http://20.23.116.163:8393/user/2', {
       method: 'PUT',
       body: formData
     }).then((data)=>{
@@ -117,44 +123,58 @@ export default function RegisterScreen({ navigation }) {
           setimageError("Error creating user, did you use correct data ?")
         }
       })
+    }).catch((error) => {
+      setShow(null)
+      setimageError("Error connecting to the database, please try again")
     })
   }
 
-  function validation() {
+  const validation = async () => {
     setShow("TRUE")
+    setimageError(null)
     let formData = new FormData();
 
     formData.append("id", -1);
     formData.append("candidate", image);
+    formData.append("reference", image);
 
     //console.log(formData);192.168.33.46
     //let resp = fetch('http://192.168.1.69:5000/', {
-    let resp = fetch('http://20.23.116.163:5000/', {
+    //let resp = fetch('http://20.23.116.163:5000/', {
+    let resp = await fetch('http://20.31.50.224:5000', {
       method: 'POST',
       body: formData
-    }).then((data)=>{
-      //console.log(data)
-      data.json().then((properties) => {
+    }).then( async (data)=>{
+      console.log(data)
+      await data.json().then(async (properties) => {
         setModal("true")
-        if(validPhoto(properties["feedback"])) {
+        const validPhotoRet = await validPhoto(properties["feedback"])
+
+        console.log("VALIDPHOTORET  ",validPhotoRet)
+        if( validPhotoRet === false) { //NoError
+          setModal(null)
           setShow(null)
+          setimageError(null)
+          RegisterUser()
           return true;
         } else {
           setShow(null)
           return false;
         }
       })
-    }).catch(function(error) {
+    }).catch(() => {
+      console.log("Error connecting to FotoFaces")
       setShow(null)
-      reject(new Error(`Unable to retrieve events.\n${error.message}`));
+      setimageError("Error Connecting to FotoFaces, please try again")
+      setModal(null)
+      return false
     })
 
-    setimageError("Error connecting to FotoFaces")
-    return false;
+    console.log("here, ", resp)
   }
 
   // PHOTO VALIDATION
-  function validPhoto(resp) {
+  const validPhoto = async (resp) => {
 
     console.log("resposta:" + resp)
 
@@ -166,7 +186,7 @@ export default function RegisterScreen({ navigation }) {
 
     let error = false
 
-    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 90) {
+    if (!resp.hasOwnProperty("Brightness") || resp["Brightness"] < 100) {
         setBright("true");
         error = true
     } else {
@@ -180,14 +200,14 @@ export default function RegisterScreen({ navigation }) {
         setColor(null)
     }
 
-    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.21) {
+    if (!resp.hasOwnProperty("Eyes Open") || resp["Eyes Open"] < 0.20) {
         setEyes("true");
         error = true
     } else {
         setEyes(null)
     }
 
-    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.6) {
+    if (!resp.hasOwnProperty("Face Recognition") || resp["Face Recognition"] > 0.60) {
         setCandidate("true");
         error = true
     } else {
@@ -201,27 +221,28 @@ export default function RegisterScreen({ navigation }) {
         setFace(null)
     }
 
-    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 25) {     // values
+    if (!resp.hasOwnProperty("Image Quality")|| resp["Image Quality"] > 36) {     // values
         setQuality("true");
         error = true
     } else {
         setQuality(null)
     }
 
-    if (!resp.hasOwnProperty("focus") || resp["focus"] < 80) {
+    if (!resp.hasOwnProperty("focus") || resp["focus"] < 70) {
         setFocus("true");
         error = true
     } else {
         setFocus(null)
     }
 
-    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 15|| resp["Head Pose"][1] > 15|| resp["Head Pose"][2] > 15) {
+    if (!resp.hasOwnProperty("Head Pose") || resp["Head Pose"][0] > 20|| resp["Head Pose"][1] > 20|| resp["Head Pose"][2] > 20) {
         setPose("true");
         error = true
     } else {
         setPose(null)
     }
 
+    // Glasses como sunglasses
     if (!resp.hasOwnProperty("Sunglasses") || resp["Sunglasses"] != "false") {
         setSunglasses("true");
         error = true
@@ -229,18 +250,15 @@ export default function RegisterScreen({ navigation }) {
         setSunglasses(null)
     }
 
-    if (!resp.hasOwnProperty("Hats") || resp["hats"] != "false") {
+    if (!resp.hasOwnProperty("Hats") || resp["Hats"] != "false") {
         setHats("true");
         error = true
     } else {
         setHats(null)
     }
 
-    if (error) {
-        return false
-    } else {
-        return true
-    }
+    console.log("ERROR - > ", error)
+    return error
   }
 
   return (
@@ -298,7 +316,7 @@ export default function RegisterScreen({ navigation }) {
         Gallery
       </Button>
 
-        {imageError ? <><Text style={styles.error}>Please Select a Photo</Text></> : null}
+        {imageError ? <><Text style={styles.error}>{imageError}</Text></> : null}
 
         {modal ? <>
         <View style={{alignItems: 'center'}}>
@@ -320,8 +338,8 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
             <View style={{flexDirection: 'row', paddingTop: 5}}>
-                <Text>No Hats: {hats ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
-                <Text style={{paddingLeft: 20}}>No Sunglasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
+                <Text>No Hats: {hats ? <Text>&#x2705;</Text>  : <Text>&#x274C;</Text> }</Text>
+                <Text style={{paddingLeft: 20}}>No Glasses: {sunglasses ? <Text>&#x274C;</Text> : <Text>&#x2705;</Text>}</Text>
             </View>
         </View>
         </>: null}
@@ -336,7 +354,12 @@ export default function RegisterScreen({ navigation }) {
       </Button>
       <View style={styles.row}>
         <Text style={{color: '#ffffff'}}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
+        <TouchableOpacity onPress={() => {
+          ls.set("Image", null)
+          ls.set("ImageUri", null)
+          navigation.replace('LoginScreen')
+        }
+        }>
           <Text style={styles.link}>Login</Text>
         </TouchableOpacity>
       </View>
