@@ -46,6 +46,8 @@ export default function RegisterScreen({ navigation }) {
       const preview = ls.get('ImageUri')
       const preview64 = ls.get("Image")
       //console.log(preview64)
+      // ls.set('ImageUri',null)
+      // ls.set("Image", null)
       if(preview !== null){
         setImageUri(preview)
         setImage(preview64)

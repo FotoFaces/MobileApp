@@ -196,14 +196,14 @@ export default function CameraApp({navigation}) {
           ref={ref => setCamera(ref)}
           onFacesDetected={handleFacesDetected}
           faceDetectorSettings={{
-            mode: FaceDetector.FaceDetectorMode.accurate,
-            //detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
-            //runClassifications: FaceDetector.FaceDetectorClassifications.all,
-            detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
-            runClassifications: FaceDetector.FaceDetectorClassifications.all,
-            minDetectionInterval: 500,
-            tracking: true
-          }}>
+              mode: FaceDetector.FaceDetectorMode.accurate,
+              //detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
+              //runClassifications: FaceDetector.FaceDetectorClassifications.all,
+              detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
+              runClassifications: FaceDetector.FaceDetectorClassifications.all,
+              minDetectionInterval: 500,
+              tracking: true
+	          }}>
             <AnimatedCircularProgress
                 style={styles.circularProgress}
                 size={PREVIEW_SIZE}
