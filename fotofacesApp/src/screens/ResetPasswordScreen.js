@@ -6,6 +6,7 @@ import Header from '../components/Header'
 import TextInput from '../components/TextInput'
 import Button from '../components/Button'
 import { emailValidator } from '../helpers/emailValidator'
+import { theme } from '../core/theme'
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -38,9 +39,10 @@ export default function ResetPasswordScreen({ navigation }) {
         description="You will receive email with password reset link."
       />
       <Button
-        mode="contained"
+        mode="outlined"
+        color={'white'}
+        style={{marginTop: 16, backgroundColor: theme.colors.primary}}
         onPress={sendResetPasswordEmail}
-        style={{ marginTop: 16 }}
       >
         Send Instructions
       </Button>

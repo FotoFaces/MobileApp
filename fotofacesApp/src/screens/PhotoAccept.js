@@ -1,70 +1,84 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
 import Button from '../components/Button'
 import Paragraph from '../components/Paragraph'
 import DisplayAnImage from '../components/Image'
-import { Text, View, StyleSheet } from 'react-native';
-import {useRoute} from '@react-navigation/native';
+import { Text, View, StyleSheet, Image } from 'react-native';
+import SimpleLottie from '../components/SimpleLottie'
+import { theme } from '../core/theme'
 
-export default function PhotoChoice({ navigation }) {
-  const { email, identifier, old_image, image } = route.params;
+
+export default function PhotoAccept({ route, navigation }) {
+
+  const { email, identifier, old_photo, name, image, imageUri } = route.params;
+  const [show, setShow] = React.useState(null);
+  const [errorMessage, setErrorMessage] = React.useState(null);
 
   const acceptPhoto = () => {
+    setShow("TRUE")
+    setErrorMessage(null)
     // update photo
     let formData = new FormData();
     formData.append("param", image);
 
-    fetch('http://20.76.47.56:8393/image/'+identifier, {
-      method: 'POST',
+    fetch('http://20.31.50.224:8393/image/'+identifier, {
+      method: 'PUT',
       body: formData
     }).then((data)=>{
-      data.json().then((properties) => {
-        navigation.navigate('StartScreen');
-      })
+      setShow(null)
+      navigation.navigate('StartScreen')
+    }).catch((error) => {
+      setShow(null)
+      setErrorMessage("Erro connecting to the database, please try again")
     })
   }
 
-
-  const route = useRoute();
   return (
     <Background>
       <Header>Update Photo</Header>
-      <Text 
-        style={styles.headline}> ✅ Valid Photo !! 
+      <Text
+        style={styles.headline}> ✅ Valid Photo !!
       </Text>
-      <Text>{"\n"}</Text>
-      <DisplayAnImage photo_url={image} />
-      <View style={styles.container}>
-        <Paragraph>
-          Are you sure you want to submit this photo?
-        </Paragraph>
-      </View>
-      <View style={styles.container}>
-        <View style={styles.button_1}>
-          <Button
-            mode="outlined"
-            onPress={acceptPhoto}>
-              Yes
-          </Button>
+
+      {show !== null ? <SimpleLottie /> :null }
+
+        <View style={styles.container}>
+          <View style={{flex:2, marginRight: 30}}>
+            <Paragraph>Old Photo</Paragraph>
+            <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+old_photo}}/>
+          </View>
+          <View style={{flex:2, marginLeft: 30}}>
+            <Paragraph>New Photo</Paragraph>
+            <Image style={styles.avatar} source={{uri: 'data:image/png;base64,'+image}}/>
+          </View>
         </View>
-        <View style={styles.button_2}>
-          <Button
-            mode="outlined"
-            onPress={
-              // back to main screen
-              navigation.navigate('MainScreen', 
-              {
-                email: email,
-                identifier: identifier,
-                old_photo: old_image
-              }
-              )
-            }>
-            No
-          </Button>
-        </View>
+
+        <View style={{marginTop: 146}}>
+          <View style={styles.container}>
+            <Paragraph>
+              Are you sure you want to submit this photo?
+            </Paragraph>
+            <View style={styles.button}>
+              <Button
+                mode="outlined"
+                onPress={acceptPhoto}>
+                  Yes
+              </Button>
+            </View>
+            <View style={styles.button}>
+              <Button
+                mode="outlined"
+                onPress={() => {
+                    // back to main screen
+                    navigation.navigate('MainScreen')
+                }}>
+                No
+              </Button>
+            </View>
+          </View>
+          {errorMessage !== null ? <><Text style={styles.error}>{errorMessage}</Text></> : null}
       </View>
     </Background>
   )
@@ -72,30 +86,43 @@ export default function PhotoChoice({ navigation }) {
 
 
 const styles = StyleSheet.create({
+  avatar: {
+    width: 170,
+    height: 170,
+    borderRadius: 63,
+    borderWidth: 4,
+    borderColor: "white",
+    marginBottom:10,
+    alignSelf:'center',
+    position: 'absolute',
+    marginTop:20
+  },
   container: {
     width:"100%",
     flexDirection: "row",
     flexWrap:"wrap",
     alignContent:"space-between",
+    alignItems:'center',
+    justifyContent:'center',
     textAlign:"center",
     margin:5,
     padding:2,
+    marginTop: 30
   },
-  button_2: {
-    flex:2 ,
+  button: {
+    flex:2,
     margin:5,
-
-},
-  button_1: {
-    flex:2 ,
-    margin:5,
-},
-
+  },
   headline: {
     color: 'green', // <-- The magic
     textAlign: 'center', // <-- The magic
     fontWeight: 'bold',
     fontSize: 19,
     lineHeight: 21
+  },
+  error: {
+    fontSize: 20,
+    color: theme.colors.error,
+    paddingTop: 8,
   }
 })

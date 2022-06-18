@@ -11,22 +11,30 @@ import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import md5 from "react-native-md5";
+import SimpleLottie from '../components/SimpleLottie'
 
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const [show, setShow] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const onLoginPressed = () => {
+    setShow("TRUE")
+    setErrorMessage(null)
+
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError) {
+      setShow(null)
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
     }
 
-    let resp = fetch('http://20.76.47.56:8393/user/'+email.value, {
+    //let resp = fetch('http://192.168.1.69:8393/user/'+email.value, {
+    let resp = fetch('http://20.31.50.224:8393/user/'+email.value, {
       method: 'GET',
     }).then((data)=>{
       data.json().then((logins) => {
@@ -34,22 +42,28 @@ export default function LoginScreen({ navigation }) {
         let hex_md5v = md5.hex_md5( password.value );
 
         if (hex_md5v === logins["password"]) {
-          navigation.navigate('MainScreen', 
+          setShow(null)
+          navigation.navigate('MainScreen',
           {
             email: email.value,
             identifier: logins["id"],
-            old_photo: logins["photo"]
+            old_photo: logins["photo"],
+            name: logins["name"]
           }
           );
         }
         else {
+          setShow(null)
           setEmail({ ...email, error: " " })
           setPassword({ ...password, error: "Email or password incorrect" })
         }
       })
+    }).catch((error) => {
+      setShow(null)
+      setErrorMessage("Error Conecting to the database, please try again")
     })
 
-    return 
+    return
   }
 
   const onLoginSSO = () => {
@@ -65,9 +79,9 @@ export default function LoginScreen({ navigation }) {
 
     location = `${authorizeEndpoint}?response_type=code&state=1234567890&scope=openid&client_id=${consumerKey}&redirect_uri=${redirectURI}`
 
-    // should wait for response    
+    // should wait for response
 
-    let searchParams = new URL(document.location).searchParams;
+    let searchParams = new URL(location).searchParams;
 
     if (searchParams.has("code")) {
 
@@ -86,7 +100,7 @@ export default function LoginScreen({ navigation }) {
         .then(res => {
             Object.keys(res).forEach((item, index) => {
                 if (acceptedAccessTokenInfo.includes(item)) {
-                  navigation.navigate('MainScreen', 
+                  navigation.navigate('MainScreen',
                   {
                     email: email.value,
                     identifier: logins["id"],
@@ -110,6 +124,9 @@ export default function LoginScreen({ navigation }) {
       <BackButton goBack={navigation.goBack} />
       <Logo />
       <Header>Welcome back</Header>
+
+      {show !== null ? <SimpleLottie /> :null }
+
       <TextInput
         label="Email"
         returnKeyType="next"
@@ -140,13 +157,19 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <Button mode="contained" onPress={onLoginSSO}>
-        SSO Login
-      </Button>
+      {errorMessage !== null ? <><Text style={styles.error}>{errorMessage}</Text></> : null}
 
-      <Button mode="contained" onPress={onLoginPressed}>
+      <Button mode="outlined"
+        color={'white'}
+        style={{backgroundColor: theme.colors.primary}} onPress={onLoginPressed}>
         Login
       </Button>
+
+      {/* <Button mode="outlined"
+        color={'white'}
+        style={{backgroundColor: theme.colors.primary}} onPress={onLoginSSO}>
+        SSO Login
+      </Button> */}
 
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
@@ -170,10 +193,15 @@ const styles = StyleSheet.create({
   },
   forgot: {
     fontSize: 13,
-    color: theme.colors.secondary,
+    color: '#ffffff'
   },
   link: {
     fontWeight: 'bold',
-    color: theme.colors.primary,
+    color: '#9be4ff',
   },
+  error: {
+    fontSize: 20,
+    color: theme.colors.error,
+    paddingTop: 8,
+  }
 })

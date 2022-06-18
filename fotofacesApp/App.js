@@ -9,7 +9,7 @@ import {
   RegisterScreen,
   ResetPasswordScreen,
   PhotoAccept,
-  PhotoChoice,
+  CameraApp,
   MainScreen,
 } from './src/screens'
 
@@ -26,15 +26,12 @@ export default function App() {
           }}
         >
           <Stack.Screen name="StartScreen" component={StartScreen} />
+          <Stack.Screen name="CameraApp" component={CameraApp} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="MainScreen" component={MainScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-          <Stack.Screen name="PhotoChoice" component={PhotoChoice} />
           <Stack.Screen name="PhotoAccept" component={PhotoAccept} />
-          <Stack.Screen
-            name="ResetPasswordScreen"
-            component={ResetPasswordScreen}
-          />
+          <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
