@@ -74,7 +74,7 @@ export default function MainScreen({ route, navigation }) {
 
     console.log("before")
 
-    let resp = fetch('http://20.61.93.43:5000/', {
+    let resp = fetch('http://13.81.83.209:5000/', {
       method: 'POST',
       body: formData
     }).then((data)=>{
